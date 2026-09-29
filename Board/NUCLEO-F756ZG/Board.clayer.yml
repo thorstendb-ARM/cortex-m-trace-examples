@@ -1,0 +1,30 @@
+layer:
+  type: Board
+  description: Minimal CMSIS device support for NUCLEO-F756ZG
+  for-device: STM32F756ZGTx
+
+  packs:
+    - pack: Keil::STM32F7xx_DFP@3.1.1
+
+  define:
+    - STM32F756xx
+    - CMSIS_device_header: '"stm32f7xx.h"'
+    - USER_VECT_TAB_ADDRESS
+
+  add-path:
+    - ../../ThirdParty/ST/cmsis-device-f7/Include
+
+  groups:
+    - group: Board
+      files:
+        - file: main.c
+        - file: target.c
+    - group: CMSIS Device
+      files:
+        - file: ../../ThirdParty/ST/cmsis-device-f7/Source/Templates/gcc/startup_stm32f756xx.s
+        - file: ../../ThirdParty/ST/cmsis-device-f7/Source/Templates/system_stm32f7xx.c
+
+  linker:
+    - script: ../Support/gcc_linker_script.ld.src
+      regions: regions.h
+      for-compiler: GCC

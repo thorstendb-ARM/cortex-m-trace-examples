@@ -1,0 +1,14 @@
+{
+  "registries": [
+    {
+      "kind": "artifact",
+      "name": "arm",
+      "location": "https://artifacts.keil.arm.com/vcpkg-ce-registry/registry.zip"
+    }
+  ],
+  "requires": {
+    "arm:compilers/arm/arm-none-eabi-gcc": "14.3.1",
+    "arm:tools/kitware/cmake": "3.31.5",
+    "arm:tools/ninja-build/ninja": "1.13.2"
+  }
+}

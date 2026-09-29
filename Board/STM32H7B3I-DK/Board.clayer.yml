@@ -1,0 +1,31 @@
+layer:
+  type: Board
+  description: Minimal CMSIS device support for STM32H7B3I-DK
+  for-device: STM32H7B3LIHxQ
+
+  packs:
+    - pack: Keil::STM32H7xx_DFP@4.1.3
+
+  define:
+    - STM32H7B3xxQ
+    - CMSIS_device_header: '"stm32h7xx.h"'
+    - USER_VECT_TAB_ADDRESS
+    - USE_PWR_DIRECT_SMPS_SUPPLY
+
+  add-path:
+    - ../../ThirdParty/ST/cmsis-device-h7/Include
+
+  groups:
+    - group: Board
+      files:
+        - file: main.c
+        - file: target.c
+    - group: CMSIS Device
+      files:
+        - file: ../../ThirdParty/ST/cmsis-device-h7/Source/Templates/gcc/startup_stm32h7b3xxq.s
+        - file: ../../ThirdParty/ST/cmsis-device-h7/Source/Templates/system_stm32h7xx_singlecore.c
+
+  linker:
+    - script: ../Support/gcc_linker_script.ld.src
+      regions: regions.h
+      for-compiler: GCC

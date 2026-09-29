@@ -1,0 +1,43 @@
+# ST boards: ULINK+ and ST-LINK USB power
+
+Connect the ULINK+ adapter to the board's 6-pin SWD/SWO header with the
+adapter PCB pointing **inwards towards the board, not outwards**. Connect its
+separate **VCC/VTref lead to board 3V3**, including when using ST-LINK USB for power.
+Use only one active debugger session when both probes are connected.
+
+Keep the SWD jumpers closed for these adapter connections; they do not isolate
+the onboard ST-LINK. See [Board support](BOARD_SUPPORT.md) for manuals and
+schematics, and [Keil AN321, p. 17](https://www.keil.com/appnotes/files/apnt_321_v1.1.pdf#page=17)
+for the adapter and separate voltage-reference lead.
+
+## Connections and jumper settings
+
+### NUCLEO-F756ZG / MB1137
+
+- **CN6:** adapter PCB points towards the two **CN4** jumpers.
+- **CN4:** both jumpers **closed**.
+- **CN1:** ST-LINK USB power; **JP3 = U5V, pins 3–4 (middle position)**.
+
+### NUCLEO-L552ZE-Q / MB1361
+
+- **CN5:** SWD/SWO adapter connection.
+- **CN4:** jumpers **1–2 and 3–4 closed**.
+- **CN1:** ST-LINK USB power; **JP6 pins 1–2**.
+- **JP3 closed** for reset; solder bridge **SB140 closed** for SWO.
+
+### STM32F429I-DISCO / MB1075
+
+- **CN2:** SWD/SWO adapter connection.
+- **CN4:** both jumpers **closed**.
+- **CN1:** ST-LINK USB power; **JP3 (IDD) closed** for MCU power.
+- Solder bridges **SB12 closed** for reset and **SB9 closed** for SWO.
+
+See [UM1670 Rev 6, pp. 18–23](https://www.st.com/resource/en/user_manual/um1670-discovery-kit-with-stm32f429zi-mcu-stmicroelectronics.pdf#page=18);
+match the designators to the physical board revision.
+
+### NUCLEO-F401RE / MB1136
+
+- **CN4:** SWD/SWO adapter connection.
+- **CN2:** both jumpers **closed**.
+- **CN1:** ST-LINK USB power; **JP5 pins 1–2 (U5V)** and **JP6 closed**.
+- Solder bridges **SB12 closed** for reset and **SB15 closed** for SWO.

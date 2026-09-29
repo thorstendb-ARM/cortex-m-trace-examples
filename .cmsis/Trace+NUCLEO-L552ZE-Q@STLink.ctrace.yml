@@ -1,0 +1,25 @@
+# Trace sources are owned by this file and the CMSIS Trace Configuration dialog.
+# Addresses are resolved from the selected ELF; do not hard-code SRAM addresses.
+ctrace:
+  setup:
+    - core: Cortex-M33
+      timestamps:
+        clock: 4000000
+        itm-prescaler: 1
+      data:
+        - location: g_trace_sine
+          label: Sine
+          access: W
+          size: 4
+          output: value
+        - location: g_trace_noise
+          label: Noise
+          access: W
+          size: 4
+          output: value
+      itm:
+        enable: 0x00000002
+      pcsampling:
+        period: 16384
+      synchronization:
+        DWT: 16M

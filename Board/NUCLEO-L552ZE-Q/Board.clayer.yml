@@ -1,0 +1,30 @@
+layer:
+  type: Board
+  description: Minimal CMSIS device support for NUCLEO-L552ZE-Q
+  for-device: STM32L552ZETxQ
+
+  packs:
+    - pack: Keil::STM32L5xx_DFP@2.0.0
+
+  define:
+    - STM32L552xx
+    - CMSIS_device_header: '"stm32l5xx.h"'
+    - USER_VECT_TAB_ADDRESS
+
+  add-path:
+    - ../../ThirdParty/ST/cmsis-device-l5/Include
+
+  groups:
+    - group: Board
+      files:
+        - file: main.c
+        - file: target.c
+    - group: CMSIS Device
+      files:
+        - file: ../../ThirdParty/ST/cmsis-device-l5/Source/Templates/gcc/startup_stm32l552xx.s
+        - file: ../../ThirdParty/ST/cmsis-device-l5/Source/Templates/system_stm32l5xx.c
+
+  linker:
+    - script: ../Support/gcc_linker_script.ld.src
+      regions: regions.h
+      for-compiler: GCC

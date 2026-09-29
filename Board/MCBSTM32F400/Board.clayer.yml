@@ -1,0 +1,30 @@
+layer:
+  type: Board
+  description: Minimal CMSIS device support for MCBSTM32F400
+  for-device: STM32F407IGHx
+
+  packs:
+    - pack: Keil::STM32F4xx_DFP@3.0.0
+
+  define:
+    - STM32F407xx
+    - CMSIS_device_header: '"stm32f4xx.h"'
+    - USER_VECT_TAB_ADDRESS
+
+  add-path:
+    - ../../ThirdParty/ST/cmsis-device-f4/Include
+
+  groups:
+    - group: Board
+      files:
+        - file: main.c
+        - file: target.c
+    - group: CMSIS Device
+      files:
+        - file: ../../ThirdParty/ST/cmsis-device-f4/Source/Templates/gcc/startup_stm32f407xx.s
+        - file: ../../ThirdParty/ST/cmsis-device-f4/Source/Templates/system_stm32f4xx.c
+
+  linker:
+    - script: ../Support/gcc_linker_script.ld.src
+      regions: regions.h
+      for-compiler: GCC

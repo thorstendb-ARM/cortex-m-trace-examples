@@ -1,0 +1,146 @@
+{
+  "f4": {
+    "repository": "https://github.com/STMicroelectronics/cmsis-device-f4",
+    "tag": "v2.6.11",
+    "commit": "0fa0e489e053fa1ca7790bb40b4d76458f64c55d",
+    "license": "Apache-2.0",
+    "files": {
+      "LICENSE.md": {
+        "sha256": "dadb755f51d36614173b28c5790cb4a991e8f4cc822e5b634fd66a4f4145824d",
+        "bytes": 9757
+      },
+      "Include/stm32f4xx.h": {
+        "sha256": "a19edea6b2f4df2ab3c567782c4d313a52319c4303bd56ad7dd1d0e077014657",
+        "bytes": 11928
+      },
+      "Include/system_stm32f4xx.h": {
+        "sha256": "02c067d5a135f540c03215dc834b1e60a97bbd4e55bfd3994b0c82a15ea3012a",
+        "bytes": 2214
+      },
+      "Source/Templates/system_stm32f4xx.c": {
+        "sha256": "a31929eab936ac98db060c18917118acf79dc96e1f03ed4b57d614535dd06d70",
+        "bytes": 26695
+      },
+      "Include/stm32f407xx.h": {
+        "sha256": "bd21220ea8b6858c2d727cca1d2a5f1077f8a81717acdac583a1e9165d858160",
+        "bytes": 1193993
+      },
+      "Include/stm32f429xx.h": {
+        "sha256": "7fe1def02187c434d09c621a8216240f97f166a337c18acfc976d9bfb4ff2041",
+        "bytes": 1311948
+      },
+      "Include/stm32f401xe.h": {
+        "sha256": "96141bb34644e1f1278af68da9ee8e1f873adf126017aabad5262d32ccce8179",
+        "bytes": 644303
+      },
+      "Source/Templates/gcc/startup_stm32f407xx.s": {
+        "sha256": "430f14fd00db0f7aa88f354aee54064efb582ddc4cc264fb8e435dc7d7a2f53d",
+        "bytes": 22858
+      },
+      "Source/Templates/gcc/startup_stm32f429xx.s": {
+        "sha256": "4b235aec8ca2fece51748221ff3d2b5ca3a113ac59738f1fda1ffa44f1da3953",
+        "bytes": 24248
+      },
+      "Source/Templates/gcc/startup_stm32f401xe.s": {
+        "sha256": "ab49e36ce3174819abbb275e4342af602b52e14a981fca9e2c22d7f09ad24af8",
+        "bytes": 20084
+      }
+    }
+  },
+  "f7": {
+    "repository": "https://github.com/STMicroelectronics/cmsis-device-f7",
+    "tag": "v1.2.10",
+    "commit": "2352e888e821aa0f4fe549bd5ea81d29c67a3222",
+    "license": "Apache-2.0",
+    "files": {
+      "LICENSE.md": {
+        "sha256": "44fd163ed2e04fe99f519f1093c2c39b21d9cc9371071de902ff0c2c8c3c57dc",
+        "bytes": 9753
+      },
+      "Include/stm32f7xx.h": {
+        "sha256": "a94a6fe526b82fbcbe36c1151d050ab4f5dd719c67233645a3f4245ac17c3068",
+        "bytes": 10247
+      },
+      "Include/system_stm32f7xx.h": {
+        "sha256": "9ddf5e1fd0b8d6a4185de55ac009367fe21063358424fd4f36f9a86cd385da68",
+        "bytes": 2274
+      },
+      "Source/Templates/system_stm32f7xx.c": {
+        "sha256": "496f2869fc809b58983740cc855707ec07b77903865d6a72ff1197cadd3ef281",
+        "bytes": 8719
+      },
+      "Include/stm32f756xx.h": {
+        "sha256": "616425656fbbbe84d2c038f811a045470f6766c6cfb346f8281e3771fee2c28e",
+        "bytes": 1411736
+      },
+      "Source/Templates/gcc/startup_stm32f756xx.s": {
+        "sha256": "dd6ba698968294fd5923cfe94c655056040535bb144baa0f85e7665835a5a6d8",
+        "bytes": 25618
+      }
+    }
+  },
+  "l5": {
+    "repository": "https://github.com/STMicroelectronics/cmsis-device-l5",
+    "tag": "v1.0.7",
+    "commit": "e237398c0cbae890f4659f74fe6b64cae339b6a0",
+    "license": "Apache-2.0",
+    "files": {
+      "LICENSE.md": {
+        "sha256": "44fd163ed2e04fe99f519f1093c2c39b21d9cc9371071de902ff0c2c8c3c57dc",
+        "bytes": 9753
+      },
+      "Include/stm32l5xx.h": {
+        "sha256": "74f588698fa94b6717e6d359d6757a9bae448af10fa6cab23cba64501603609e",
+        "bytes": 7396
+      },
+      "Include/system_stm32l5xx.h": {
+        "sha256": "e2b417ba1b4ebb01f687b8f649413db1b5c7d977ff8defee4c505d068a125b2c",
+        "bytes": 2706
+      },
+      "Source/Templates/system_stm32l5xx.c": {
+        "sha256": "2995fec63aa8a74220d64505f137f721f5fe1175dc2fcfbf657ead30025fad58",
+        "bytes": 13259
+      },
+      "Include/stm32l552xx.h": {
+        "sha256": "c2ac14f09cc63e53d9eed5605038b7590d753f12fa3ace8d2ab209582d120f25",
+        "bytes": 1515981
+      },
+      "Source/Templates/gcc/startup_stm32l552xx.s": {
+        "sha256": "a0089a509bcf4ef1fe631a08060e7336acffc3c2b380609ec99fca165fea865e",
+        "bytes": 15539
+      }
+    }
+  },
+  "h7": {
+    "repository": "https://github.com/STMicroelectronics/cmsis-device-h7",
+    "tag": "v1.10.7",
+    "commit": "8f922cdc7cc6de2344e75ddd657889f4ff761790",
+    "license": "Apache-2.0",
+    "files": {
+      "LICENSE.md": {
+        "sha256": "49d37f1f2e5c1f9fc9da194b44ffbfa41f966b7cf446fbab4d1e2b0c1e3d20df",
+        "bytes": 11348
+      },
+      "Include/stm32h7xx.h": {
+        "sha256": "99ac7d4598e20d9bd74e0e001f0e63c2a8eb0a3584242d9e442be31ceb616cb9",
+        "bytes": 11834
+      },
+      "Include/system_stm32h7xx.h": {
+        "sha256": "e0f13c2971d34bda571aed454880b3608093cd9a5f7420a763e8c2bda34e826a",
+        "bytes": 2422
+      },
+      "Source/Templates/system_stm32h7xx_singlecore.c": {
+        "sha256": "9732131237a31b11cdd72d67f53a9b309f16f3d08482370f1c0a3fc19944f8d0",
+        "bytes": 18483
+      },
+      "Include/stm32h7b3xxq.h": {
+        "sha256": "497319c5fe5b4631c1c7c40b790723db44efa6dd8c9183a17bed6b4e939d88d2",
+        "bytes": 1800554
+      },
+      "Source/Templates/gcc/startup_stm32h7b3xxq.s": {
+        "sha256": "53dc78713f4edc841882d8848e8367d78a11894215d4d0c8a4f9c037d2a567d4",
+        "bytes": 29756
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+project:
+  description: Common RTX5 application for Cortex-M trace experiments
+  language-C: c11
+  output:
+    type:
+      - elf
+      - hex
+      - bin
+
+  add-path:
+    - ../../Common/Include
+
+  components:
+    - component: ARM::CMSIS:CORE
+    - component: ARM::CMSIS:OS Tick:SysTick
+    - component: ARM::CMSIS:RTOS2:Keil RTX5&Source
+
+  groups:
+    - group: Application
+      files:
+        - file: ../../Common/App/app_main.c
+        - file: ../../Common/Include/app.h
+        - file: ../../Common/Include/target.h
+    - group: Workloads
+      files:
+        - file: ../../Common/Workloads/dwt_workload.c
+        - file: ../../Common/Include/dwt_workload.h
+
+    - group: Trace Output
+      files:
+        - file: ../../Common/Trace/itm_output.c
+        - file: ../../Common/Include/trace.h
+
+  layers:
+    - layer: $Board-Layer$
+      type: Board

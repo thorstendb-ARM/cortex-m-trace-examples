@@ -1,0 +1,29 @@
+# CMSIS/CMake build products; keep source inputs and the pack lock.
+/out/
+/tmp/
+/.trace/
+*.cbuild.yml
+*.cbuild-idx.yml
+*.cbuild-run.yml
+*.cbuild-gen.yml
+*.cbuild-gen-idx.yml
+*.cbuild-set.yml
+*.cbuild2cmake
+*.cprj
+compile_commands.json
+# Context headers are regenerated; component configuration is versioned.
+**/RTE/_*/
+*.update@*
+.vscode/cmsis.json
+.DS_Store
+
+# CMSIS-generated host environment and local VS Code state.
+/.cmsis/tools-environment.yml
+/Projects/*/.clangd
+/.vscode/settings.json
+/.vscode/launch.json
+/.vscode/tasks.json
+
+# Local Python analysis caches.
+__pycache__/
+*.py[cod]

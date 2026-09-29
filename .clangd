@@ -1,0 +1,4 @@
+# CMSIS supplies the active compilation database through clangd.arguments.
+# This GCC-only option is unsupported by clangd; firmware build flags stay in cbuild.
+CompileFlags:
+  Remove: [-masm-syntax-unified]

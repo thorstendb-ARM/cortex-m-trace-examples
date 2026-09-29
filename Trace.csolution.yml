@@ -1,0 +1,175 @@
+# Build inputs; cbuild generates *.cbuild*.yml and the debugger run description.
+solution:
+  created-for: CMSIS-Toolbox@2.15.0
+  compiler: GCC@14.3.1
+  cdefault:
+
+  packs:
+    - pack: ARM::CMSIS@6.3.0
+    - pack: ARM::CMSIS-RTX@5.9.0
+
+  build-types:
+    - type: Debug
+      debug: on
+      optimize: none
+
+  target-types:
+    - type: MCBSTM32F400
+      device: STMicroelectronics::STM32F407IGHx
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/MCBSTM32F400/Board.clayer.yml
+      target-set:
+        - set:
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+
+    - type: NUCLEO-L552ZE-Q
+      device: STMicroelectronics::STM32L552ZETxQ
+      processor:
+        trustzone: off
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/NUCLEO-L552ZE-Q/Board.clayer.yml
+      target-set:
+        - set: ULINKplus
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            clock: 10000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 4000000
+                output-clock: 1000000
+        - set: STLink
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ST-Link@pyOCD
+            protocol: swd
+            clock: 4000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 4000000
+                output-clock: 1000000
+
+    - type: NUCLEO-F756ZG
+      device: STMicroelectronics::STM32F756ZGTx
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/NUCLEO-F756ZG/Board.clayer.yml
+      target-set:
+        - set: ULINKplus
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            clock: 10000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+        - set: STLink
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ST-Link@pyOCD
+            protocol: swd
+            clock: 4000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+
+    - type: STM32F429I-DISCO
+      device: STMicroelectronics::STM32F429ZITx
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/STM32F429I-DISCO/Board.clayer.yml
+      target-set:
+        - set: ULINKplus
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            clock: 10000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+        - set: STLink
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ST-Link@pyOCD
+            protocol: swd
+            clock: 4000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+
+    - type: NUCLEO-F401RE
+      device: STMicroelectronics::STM32F401RETx
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/NUCLEO-F401RE/Board.clayer.yml
+      target-set:
+        - set: ULINKplus
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            clock: 10000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+        - set: STLink
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ST-Link@pyOCD
+            protocol: swd
+            clock: 4000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+
+    - type: STM32H7B3I-DK
+      device: STMicroelectronics::STM32H7B3LIHxQ
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/STM32H7B3I-DK/Board.clayer.yml
+      target-set:
+        - set:
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            clock: 10000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 64000000
+                output-clock: 1000000
+
+  projects:
+    - project: Projects/TraceDemo/TraceDemo.cproject.yml
