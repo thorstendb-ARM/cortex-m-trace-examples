@@ -1,9 +1,12 @@
 # Cortex-M Trace Examples
 
-One shared **RTX5 trace demo** for seven Cortex-M boards, built with CMSIS-Toolbox.
-Two threads update sine and deterministic-noise variables every 100 ms for DWT;
-a third emits a 32-bit counter on ITM channel 1 every 200 ms. Trace profiles add
-PC sampling and timestamps. pyOCD captures SWO; ctrace converts recordings to CSV.
+A common firmware baseline for testing trace across Cortex-M boards and debug
+probes. One **CMSIS solution** builds a shared **RTX5 application** through seven
+local board layers, covering Cortex-M4, Cortex-M7 and Cortex-M33.
+
+The workload updates sine and deterministic-noise variables every 100 ms for DWT
+and emits an ITM channel 1 counter every 200 ms. Debugger profiles add PC sampling
+and timestamps. pyOCD captures SWO; ctrace converts recordings to CSV.
 
 **Status: experimental SWO demo.** Trace Generation and automatic CSV conversion
 require the [listed development tool versions](docs/BUILD.md#trace-toolchain).
@@ -13,24 +16,30 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 
 | Target | Core | Configured probes |
 | --- | --- | --- |
-| [MCBSTM32F400](Board/MCBSTM32F400/README.md) | Cortex-M4 | ULINK+ |
-| [NUCLEO-L552ZE-Q](Board/NUCLEO-L552ZE-Q/README.md) | Cortex-M33, TrustZone off | ULINK+, ST-LINK |
-| [NUCLEO-F756ZG](Board/NUCLEO-F756ZG/README.md) | Cortex-M7 | ULINK+, ST-LINK |
-| [STM32F429I-DISCO](Board/STM32F429I-DISCO/README.md) | Cortex-M4 | ULINK+, ST-LINK |
-| [NUCLEO-F401RE](Board/NUCLEO-F401RE/README.md) | Cortex-M4 | ULINK+, ST-LINK |
-| [STM32H7B3I-DK](Board/STM32H7B3I-DK/README.md) | Cortex-M7 | ULINK+ |
-| [STM32F4-DISCO](Board/STM32F4-DISCO/README.md), MB997 B-02 | Cortex-M4 | ULINK+, ST-LINK/V2 |
+| [MCBSTM32F400](Board/MCBSTM32F400/README.md) | Cortex-M4 | `ULINKplus` |
+| [NUCLEO-L552ZE-Q](Board/NUCLEO-L552ZE-Q/README.md) | Cortex-M33, TrustZone off | `ULINKplus`, `STLink` |
+| [NUCLEO-F756ZG](Board/NUCLEO-F756ZG/README.md) | Cortex-M7 | `ULINKplus`, `STLink` |
+| [STM32F429I-DISCO](Board/STM32F429I-DISCO/README.md) | Cortex-M4 | `ULINKplus`, `STLink` |
+| [NUCLEO-F401RE](Board/NUCLEO-F401RE/README.md) | Cortex-M4 | `ULINKplus`, `STLink` |
+| [STM32H7B3I-DK](Board/STM32H7B3I-DK/README.md) | Cortex-M7 | `ULINKplus` |
+| [STM32F4-DISCO](Board/STM32F4-DISCO/README.md), MB997 B-02 | Cortex-M4 | `ULINKplus`, `STLink` |
 
 Hardware results and open capture issues are listed in
 [Validation](docs/VALIDATION.md). This project currently implements SWO;
 Trace Buffer (TB) support is planned.
 
-## Use the demo
+## Prerequisites
 
-1. Open this folder in VS Code and install its recommended build and clangd
-   extensions. Activate the tools from `vcpkg-configuration.json`; see
-   [build tools and setup](docs/BUILD.md). For Trace Generation, use the
-   [specified CMSIS Debugger and trace-tool versions](docs/BUILD.md#trace-toolchain).
+Use one of the boards and configured probes above. The [build guide](docs/BUILD.md)
+lists the build tools and editor setup; `vcpkg-configuration.json` records the
+build-tool versions. Trace Generation and CSV conversion additionally require
+the [reference debugger and trace-tool versions](docs/BUILD.md#trace-toolchain).
+Missing CMSIS packs are installed by `cbuild --packs` using the pinned dependencies.
+
+## Quick start
+
+1. Open this folder in VS Code and activate the build environment described in
+   the [build guide](docs/BUILD.md).
 2. Select `Trace.csolution.yml` as the active solution. Open **CMSIS: Manage Solution
    Settings**, choose a board and, where available, the `ULINKplus` or `STLink` set.
    Both use automatic probe selection. Check the
@@ -47,25 +56,22 @@ Trace Buffer (TB) support is planned.
 Command-line build from an activated tool environment:
 
 ```sh
-cbuild Trace.csolution.yml --active 'STM32F429I-DISCO@STLink' --packs --update-rte
+cbuild Trace.csolution.yml --active 'STM32F429I-DISCO@STLink' --packs --frozen-packs --update-rte
 ```
 
 Changing the debugger set keeps the same application image for that board. Changing
 boards selects another local board layer. Firmware produces the signals; Pack
 sequences, pyOCD and ctrace configuration own trace initialization.
 
-## Add a board with an agent
+## Add a board
 
-Use the project skill [add-trace-board](.agents/skills/add-trace-board/SKILL.md),
-for example: `Use $add-trace-board to add NUCLEO-G474RE with STLink.`
-Without a board name or debugger, the skill asks for the missing information.
-It follows [DESIGN.md](docs/DESIGN.md) and adds the target, board layer, startup,
-trace profiles and build checks. Hardware validation is reported separately.
-
-Codex discovers the repository's `.agents/skills/` directory
-([skill discovery](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)).
-For an agent without skill discovery, explicitly ask it to read the linked
-`SKILL.md` and follow its workflow.
+Follow the [project design](docs/DESIGN.md) to add a local board layer, target and
+trace profiles while reusing the shared application. The optional
+[add-trace-board agent skill](.agents/skills/add-trace-board/SKILL.md) guides this
+workflow, including build checks and hardware validation when a board is available.
+For example: `Use $add-trace-board to add NUCLEO-G474RE with STLink.`
+If your agent does not discover repository skills, ask it to read the linked
+`SKILL.md` first.
 
 ## Project files and documentation
 
@@ -84,4 +90,7 @@ For an agent without skill discovery, explicitly ask it to read the linked
 Build output (`out/`, `tmp/`) and local captures (`.trace/`) are ignored by Git
 and are not included in a fresh checkout.
 
-[Apache License 2.0](LICENSE). Third-party sources retain their own notices.
+## License
+
+Project code is licensed under [Apache License 2.0](LICENSE). Third-party sources
+retain their own licenses and notices; see the [source inventory](ThirdParty/README.md).
