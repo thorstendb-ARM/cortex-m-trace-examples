@@ -32,8 +32,10 @@ works with CMSIS-Toolbox, vendor documentation and the repository files alone.
   creating a duplicate target. Add only the requested debugger profiles.
 - Resolve the exact fitted MCU, CMSIS device/processor identifier and support
   pack from vendor board documentation and the CMSIS catalog/PDSC. Check the
-  physical revision when it affects wiring or initialization. A missing BSP
-  does not prevent the project's device-based local layer.
+  physical revision when it affects wiring or initialization. Older PCB revisions
+  can use a different onboard-probe generation from the current marketing name;
+  verify the fitted MCU, probe and revision-specific connector/jumper arrangement.
+  A missing BSP does not prevent the project's device-based local layer.
 - Verify internal Flash/SRAM, startup/reset clock, power/security prerequisites,
   SWD access, SWO routing and pyOCD support for the requested probe/device.
   Confirm the two DWT data sources, ITM channel 1 and PC sampling are supported;
@@ -47,9 +49,11 @@ works with CMSIS-Toolbox, vendor documentation and the repository files alone.
 
 ## Add the target and board layer
 
-Verify the installed build environment against `vcpkg-configuration.json` and
-BUILD.md. Use the existing compiler and pinned dependencies. Install missing
-required packs through the normal CMSIS workflow; do not upgrade unrelated packs.
+Verify the existing build environment against BUILD.md and the workspace tool
+manifest, when present. Use installed compiler/debug/trace tools; provide version
+references for missing tools instead of installing or upgrading tools or extensions.
+Let `cbuild --packs` install missing required CMSIS packs, using `--frozen-packs`
+when the existing lock applies; do not upgrade unrelated packs.
 
 Create `Board/<board>/` following the closest compatible local layer:
 
@@ -112,7 +116,9 @@ Do not patch installed Packs or add firmware trace setup as a board workaround.
 
 - Build each new target/set using the BUILD.md workflow, including Pack resolution
   and RTE generation as needed. Check one linked startup/main, memory fit and
-  both watched symbols. A template or successful YAML parse is not a build result.
+  both watched symbols. For two debugger sets, compare the BIN or ELF loadable
+  sections and watched symbol addresses; debug metadata can differ while the
+  application image is identical. A YAML parse is not a build result.
 - Generate trace runtime configuration from the current ELF with the installed
   pyTS workflow. `out/Trace+<target>.cbuild-run.yml` has no set suffix and describes
   the active set. Source profiles and generated `.trace/` files for named sets
@@ -122,9 +128,24 @@ Do not patch installed Packs or add firmware trace setup as a board workaround.
 - Hardware connection is not required to finish implementation/build checks.
   If live testing is requested and the board is available, identify the intended
   board/probe before loading or debugging and use the checks in
-  [VALIDATION.md](../../../docs/VALIDATION.md). Inspect recording integrity as
-  well as automatic CSV creation at pause/end. Never infer a hardware PASS from
-  a build or a CSV file alone.
+  [VALIDATION.md](../../../docs/VALIDATION.md). First check USB enumeration, then
+  pyOCD detection, probe model/firmware and target access. A missing USB device
+  needs a cable/connector/power check before firmware diagnosis. If several probes
+  are attached, establish which serves this board and use a local per-session
+  selection; retain automatic selection in the solution. Keep unrelated debug
+  sessions untouched and use one probe at a time on the board.
+- If probe firmware needs updating, check the installed vendor updater and the
+  actual probe generation. Use existing user authorization when it covers the
+  update; otherwise obtain it before updating. Update only the identified probe,
+  then re-enumerate and verify its version and target access before flashing.
+  If the updater requests a probe restart, reconnect its USB and retry the
+  updater before opening a debug connection. Probe update mode is separate from
+  the target MCU boot mode; do not change target boot pins or option bytes.
+- Inspect recording integrity as well as automatic CSV creation at pause/end.
+  Check for unexpected trace sources as well as gaps, decoder errors and overflow.
+  For register readback, compare writable configuration fields separately from
+  read-only capability/status bits. Never infer a hardware PASS from a build or
+  a CSV file alone.
 - Update README board counts/tables, [BOARD_SUPPORT.md](../../../docs/BOARD_SUPPORT.md)
   and DEBUG_PROBES.md. Add only applicable connector/jumper information to
   [ST_BOARD_BRINGUP.md](../../../docs/ST_BOARD_BRINGUP.md). Keep hardware results

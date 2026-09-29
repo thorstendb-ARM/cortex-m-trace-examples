@@ -2,7 +2,8 @@
 
 Connect the ULINK+ adapter to the board's 6-pin SWD/SWO header with the
 adapter PCB pointing **inwards towards the board, not outwards**. Connect its
-separate **VCC/VTref lead to board 3V3**, including when using ST-LINK USB for power.
+separate **VCC/VTref lead to the board 3V3/3V reference**, including when using
+ST-LINK USB for power.
 Use only one active debugger session when both probes are connected.
 
 Keep the SWD jumpers closed for these adapter connections; they do not isolate
@@ -41,3 +42,17 @@ match the designators to the physical board revision.
 - **CN2:** both jumpers **closed**.
 - **CN1:** ST-LINK USB power; **JP5 pins 1–2 (U5V)** and **JP6 closed**.
 - Solder bridges **SB12 closed** for reset and **SB15 closed** for SWO.
+
+### STM32F4-DISCO / MB997 B-02
+
+- **CN2:** 6-pin SWD/SWO adapter connection; pins 1–6 are VDD_TARGET, SWCLK,
+  GND, SWDIO, NRST and SWO.
+- **CN3:** both jumpers **closed** (1–2 and 3–4).
+- **CN1:** onboard ST-LINK/V2 Mini-B USB connection and board power;
+  **JP1 (IDD) closed** for MCU power.
+- **VCC/VTref:** connect the adapter's separate lead to **P2 pin 5 or 6 (3V)**.
+  CN2 pin 1 does not provide the board's supply voltage.
+- Solder bridges **SB11 closed** for reset and **SB12 closed** for PB3/SWO.
+
+See [UM1472 Rev 9, pp. 20–24](https://www.st.com/resource/en/user_manual/um1472-stm32f4-discovery-stmicroelectronics.pdf#page=20)
+and the [MB997 B.2 schematic, sheets 1–2](https://www.st.com/resource/en/schematic_pack/mb997-f407vgt6-b02_schematic.pdf).

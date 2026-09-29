@@ -20,7 +20,9 @@ cbuild list contexts Trace.csolution.yml
 
 [`Trace.csolution.yml`](../Trace.csolution.yml) and the board layers pin the
 CMSIS/RTX and device packs; [`Trace.cbuild-pack.yml`](../Trace.cbuild-pack.yml)
-records their resolved versions. Use `--frozen-packs` to retain that resolution.
+records their resolved versions. `--packs` lets cbuild/cpackget install missing
+packs; `--frozen-packs` retains the recorded resolution and does not install packs
+on its own.
 Standalone ST CMSIS sources are included as described in the
 [third-party inventory](../ThirdParty/README.md). No CubeMX, HAL/LL, BSP library
 or complete STM32Cube installation is required.
@@ -46,13 +48,13 @@ release.
 
 ```sh
 # First build; install missing pinned packs and generate RTE files.
-cbuild Trace.csolution.yml --active MCBSTM32F400 --packs --update-rte
+cbuild Trace.csolution.yml --active MCBSTM32F400 --packs --frozen-packs --update-rte
 
 # Select a board and named debugger set.
-cbuild Trace.csolution.yml --active 'NUCLEO-F756ZG@STLink' --frozen-packs
+cbuild Trace.csolution.yml --active 'NUCLEO-F756ZG@STLink' --packs --frozen-packs
 
 # Build all Debug contexts.
-cbuild Trace.csolution.yml --context 'TraceDemo.Debug+*' --frozen-packs
+cbuild Trace.csolution.yml --context 'TraceDemo.Debug+*' --packs --frozen-packs
 ```
 
 `--active <target>` selects an unnamed target set; `--active '<target>@<set>'`

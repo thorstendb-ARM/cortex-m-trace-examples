@@ -1,6 +1,6 @@
 # Board support and references
 
-All six targets use local device-based layers in `Board/<Board>/Board.clayer.yml`.
+All seven targets use local device-based layers in `Board/<Board>/Board.clayer.yml`.
 The solution selects each through `Board-Layer`. Device names and pinned DFPs
 below match the local configuration. Confirm the physical PCB revision separately
 from the catalog board revision.
@@ -13,6 +13,7 @@ from the catalog board revision.
 | [STM32F429I-DISCO](../Board/STM32F429I-DISCO/README.md) | `STM32F429ZITx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [NUCLEO-F401RE](../Board/NUCLEO-F401RE/README.md) | `STM32F401RETx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [STM32H7B3I-DK](../Board/STM32H7B3I-DK/README.md) | `STM32H7B3LIHxQ` | Cortex-M7 | `STM32H7xx_DFP@4.1.3` |
+| [STM32F4-DISCO](../Board/STM32F4-DISCO/README.md) | `STM32F407VGTx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 
 ## Shared layer design
 
@@ -144,3 +145,21 @@ record them.
 See [Validation](VALIDATION.md) for results and the pending onboard STLINK-V3E
 validation. The device's documented 4 KiB Embedded Trace Buffer is a candidate
 for later TB work; its access path and pyOCD support remain unqualified.
+
+### STM32F4-DISCO / MB997 B-02
+
+The original **STM32F4DISCOVERY**, PCB **MB997 B-02**, carries an
+**STM32F407VGT6** and **ST-LINK/V2**. Its local layer uses device
+`STMicroelectronics::STM32F407VGTx`. The later STM32F407G-DISC1 has different
+onboard-probe hardware; select documentation for the physical PCB revision.
+
+| Reference | Document |
+| --- | --- |
+| Board manual | [UM1472 Rev 9](https://www.st.com/resource/en/user_manual/um1472-stm32f4-discovery-stmicroelectronics.pdf), pp. 20–24 for connections, pp. 33–35 for board revisions |
+| Schematic | [MB997-F407VGT6-B02](https://www.st.com/resource/en/schematic_pack/mb997-f407vgt6-b02_schematic.pdf), sheets 1–3 for PCB identity, SWD/SWO, power and fitted MCU |
+| Datasheet | [DS8626, STM32F405/407](https://www.st.com/resource/en/datasheet/stm32f405rg.pdf) |
+| Reference manual | [RM0090](https://www.st.com/resource/en/reference_manual/rm0090-stm32f405415-stm32f407417-stm32f427437-and-stm32f429439-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) |
+| Errata | ES0182 in the [STM32F407/417 document index](https://www.st.com/en/microcontrollers-microprocessors/stm32f407-417/documentation.html) |
+
+Use the [board README](../Board/STM32F4-DISCO/README.md) and
+[MB997 wiring notes](ST_BOARD_BRINGUP.md#stm32f4-disco--mb997-b-02).

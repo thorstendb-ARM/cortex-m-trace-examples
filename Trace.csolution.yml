@@ -171,5 +171,35 @@ solution:
                 input-clock: 64000000
                 output-clock: 1000000
 
+    - type: STM32F4-DISCO
+      device: STMicroelectronics::STM32F407VGTx
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/STM32F4-DISCO/Board.clayer.yml
+      target-set:
+        - set: ULINKplus
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            clock: 10000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+        - set: STLink
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ST-Link@pyOCD
+            protocol: swd
+            clock: 4000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+
   projects:
     - project: Projects/TraceDemo/TraceDemo.cproject.yml

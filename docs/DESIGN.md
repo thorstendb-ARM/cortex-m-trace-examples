@@ -31,7 +31,7 @@ hardware results and capture limitations are in [Validation](VALIDATION.md).
   exclude build outputs, `.trace/` and machine-specific settings from Git.
 
 The agreed board order is MCBSTM32F400, NUCLEO-L552ZE-Q, NUCLEO-F756ZG,
-STM32F429I-DISCO, NUCLEO-F401RE, then STM32H7B3I-DK.
+STM32F429I-DISCO, NUCLEO-F401RE, STM32H7B3I-DK, then STM32F4-DISCO (MB997 B-02).
 
 ## Architecture and ownership
 
@@ -72,7 +72,7 @@ and would not generate the call to `app_main()`.
 1. Established one solution, one CProject and a `Debug` build with optimization
    disabled. Dependencies are pinned in the [Pack lock](../Trace.cbuild-pack.yml);
    tool versions and setup are in [BUILD.md](BUILD.md).
-2. Authored six local board layers using standalone ST CMSIS startup, system and
+2. Authored seven local board layers using standalone ST CMSIS startup, system and
    header sources, keeping the build independent of CubeMX generator paths.
    Included source commit IDs and hashes in
    [ThirdParty/ST/sources.json](../ThirdParty/ST/sources.json).

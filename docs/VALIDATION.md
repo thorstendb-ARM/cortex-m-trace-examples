@@ -1,7 +1,8 @@
 # Validation
 
-Status: **2026-09-28**. Build, Flash loading/readback and RTX5 execution passed on
-all six boards. Both debuggers use the same image where tested. Board prerequisites
+Status: **2026-09-29**. Build, Flash loading/readback and RTX5 execution passed
+on all seven boards: the original six on 2026-09-28, STM32F4-DISCO on 2026-09-29.
+Both debuggers use the same image where tested. Board prerequisites
 and configuration are in [Board support](BOARD_SUPPORT.md); capture settings and
 commands are in [Debugger profiles](DEBUG_PROBES.md) and [Trace workflow](TRACE_APP.md).
 
@@ -20,6 +21,7 @@ A PASS does not establish complete capture from reset or repeatable start/pause/
 | STM32F429I-DISCO | FAIL | PASS | ULINK+: initial-sync and final-packet errors. ST-LINK: one pause → end sequence passes |
 | NUCLEO-F401RE | PASS | PASS | ULINK+: incomplete pause packet; full end-packet checks pending. ST-LINK: one pause → end sequence passes |
 | STM32H7B3I-DK | FAIL | — | ULINK+: incomplete/malformed packets at pause/end |
+| STM32F4-DISCO (MB997 B-02) | PASS | PASS | ULINK+: unexpected ITM26 records at pause/resume boundaries; incomplete pause/end packets. ST-LINK: pause passes, end incomplete |
 
 Controlled ULINK+ findings:
 
@@ -40,6 +42,7 @@ same ordering still fails initial synchronization on MCB and H7.
   100 ms, ITM1 counter at 200 ms, decoder errors/overflows and PC ranges. Startup
   BSS zero stores are separated from application values. Timing uses the configured
   clock; PC range checks do not prove instruction-boundary validity.
+- STM32F4-DISCO also passed hardware-breakpoint and single-step checks with both probes.
 - L552 was tested with hardware TrustZone disabled. Tests use the internal-memory
   and reset-clock baseline; they do not qualify external memory or other clock setups.
 

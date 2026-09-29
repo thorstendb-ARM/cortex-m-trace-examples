@@ -1,6 +1,6 @@
 # Cortex-M Trace Examples
 
-One shared **RTX5 trace demo** for six Cortex-M boards, built with CMSIS-Toolbox.
+One shared **RTX5 trace demo** for seven Cortex-M boards, built with CMSIS-Toolbox.
 Two threads update sine and deterministic-noise variables every 100 ms for DWT;
 a third emits a 32-bit counter on ITM channel 1 every 200 ms. Trace profiles add
 PC sampling and timestamps. pyOCD captures SWO; ctrace converts recordings to CSV.
@@ -19,6 +19,7 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 | [STM32F429I-DISCO](Board/STM32F429I-DISCO/README.md) | Cortex-M4 | ULINK+, ST-LINK |
 | [NUCLEO-F401RE](Board/NUCLEO-F401RE/README.md) | Cortex-M4 | ULINK+, ST-LINK |
 | [STM32H7B3I-DK](Board/STM32H7B3I-DK/README.md) | Cortex-M7 | ULINK+ |
+| [STM32F4-DISCO](Board/STM32F4-DISCO/README.md), MB997 B-02 | Cortex-M4 | ULINK+, ST-LINK/V2 |
 
 Hardware results and open capture issues are listed in
 [Validation](docs/VALIDATION.md). This project currently implements SWO;
@@ -71,7 +72,7 @@ For an agent without skill discovery, explicitly ask it to read the linked
 | File or directory | Purpose |
 | --- | --- |
 | `Trace.csolution.yml`, `Projects/TraceDemo/TraceDemo.cproject.yml` | Targets, debugger sets, common application and RTX5 components |
-| `Common/`, `Board/` | Shared application and six local board layers |
+| `Common/`, `Board/` | Shared application and seven local board layers |
 | `.cmsis/`, `Trace.cbuild-pack.yml`, `vcpkg-configuration.json` | Trace/debug profiles and pinned dependencies |
 | [DESIGN.md](docs/DESIGN.md) | Agreed requirements, architecture and how the baseline was assembled |
 | [BUILD.md](docs/BUILD.md), [DEBUG_PROBES.md](docs/DEBUG_PROBES.md) | Tool setup, builds and switching probes |

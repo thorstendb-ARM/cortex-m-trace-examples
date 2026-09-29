@@ -26,6 +26,7 @@ type are connected, select the intended probe before loading an image.
 | STM32F429I-DISCO | `ULINKplus`, `STLink` | 16 MHz |
 | NUCLEO-F401RE | `ULINKplus`, `STLink` | 16 MHz |
 | STM32H7B3I-DK | `ULINKplus` (unnamed set) | 64 MHz |
+| STM32F4-DISCO (MB997 B-02) | `ULINKplus`, `STLink` | 16 MHz |
 
 For the two unnamed sets, select `--active MCBSTM32F400` or
 `--active STM32H7B3I-DK`, without an `@ULINKplus` suffix. The other boards
@@ -47,7 +48,7 @@ settings are described in [Trace application](TRACE_APP.md#configuration-ownersh
 From an activated command-line environment, for example:
 
 ```sh
-cbuild Trace.csolution.yml --active 'NUCLEO-F756ZG@STLink' --frozen-packs
+cbuild Trace.csolution.yml --active 'NUCLEO-F756ZG@STLink' --packs --frozen-packs
 /path/to/pyTS out/Trace+NUCLEO-F756ZG.cbuild-run.yml --format json
 ```
 
