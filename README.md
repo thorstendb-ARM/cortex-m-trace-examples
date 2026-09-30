@@ -1,5 +1,10 @@
 # Cortex-M Trace Examples
 
+**Project scope:** This project is used to test and bring up the new trace
+architecture across a selection of boards and trace use cases. It is not a board
+bring-up project or a reference example, and is currently not intended as a
+starting point for customer projects.
+
 A common firmware baseline for testing trace across Cortex-M boards and debug
 probes. One **CMSIS solution** builds a shared **RTX5 application** through seven
 local board layers, covering Cortex-M4, Cortex-M7 and Cortex-M33.

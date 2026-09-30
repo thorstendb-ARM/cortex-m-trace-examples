@@ -1,10 +1,11 @@
 # Validation
 
-Status: **2026-09-29**. Build, Flash loading/readback and RTX5 execution passed
+Status: **2026-09-30**. Build, Flash loading/readback and RTX5 execution passed
 on all seven boards: the original six on 2026-09-28, STM32F4-DISCO on 2026-09-29.
 Both debuggers use the same image where tested. Board prerequisites
 and configuration are in [Board support](BOARD_SUPPORT.md); capture settings and
 commands are in [Debugger profiles](DEBUG_PROBES.md) and [Trace workflow](TRACE_APP.md).
+An additional L552 board passed the ST-LINK retest below after TrustZone/RDP recovery.
 
 ## Results
 
@@ -45,6 +46,42 @@ same ordering still fails initial synchronization on MCB and H7.
 - STM32F4-DISCO also passed hardware-breakpoint and single-step checks with both probes.
 - L552 was tested with hardware TrustZone disabled. Tests use the internal-memory
   and reset-clock baseline; they do not qualify external memory or other clock setups.
+
+## NUCLEO-L552ZE-Q recovery and ST-LINK retest — 2026-09-30
+
+**Build, Flash readback, RTX5 execution and controlled SWO: PASS.** This retest
+used ST-LINK `066DFF393132534E43041740`, firmware `V2J46M33`, on another board
+with `CPUID=0x410FD212` and `DBGMCU_IDCODE=0x10006472` (MCU Rev A).
+
+Initially, `DAUTHSTATUS=0xAF`, the core could not be halted, and `TraceStart`
+failed reading `RCC_AHB2ENR` at `0x4002104C`. FLASH option registers were also
+inaccessible, including under reset. With CN11 pins 5–7 connected (BOOT0 high)
+and a power cycle, STM32CubeProgrammer 2.19.0 Hotplug readback established
+`RDP=0x55` (level 0.5), `TZEN=1`, `BOOT_LOCK=0`, `nSWBOOT0=1`, and
+`NSBOOTADD1=0x17F200`. After explicit authorization, regression to `RDP=0xAA`,
+`TZEN=0` succeeded. Independent option-byte readback and a full 512 KiB Flash
+blank check verified the recovery. The temporary BOOT0 jumper was removed
+before programming the unchanged trace example.
+
+The image matched its BIN readback. The IDE reached `main`, all five RTX tasks
+were present, and a conditional breakpoint at ITM counter 5 was hit with no
+fault flags. A subsequent 30.006 s controlled capture at 4 MHz core clock /
+1 Mbaud SWO produced 65,290 bytes: 299 samples each of sine and deterministic
+noise, 150 consecutive ITM1 values (1–150), and 7,320 PC samples within executable
+ELF sections. Median DWT intervals were 99.99325 ms; ITM intervals were
+199.9865 ms. Runtime reported `g_app_state=1`, `g_trace_itm_dropped=0`, and
+`CFSR=HFSR=0`. Decoder exit was 0 with no error or overflow records.
+
+The startup boundary remains incomplete: both DWT streams begin at application
+index 2 and ITM begins at 1. No rows were discarded for the passing checks.
+This result validates the captured steady sequence and timing, not complete
+delivery from reset or IDE pause/end recording integrity.
+
+Local evidence (ignored by Git): recovery logs and option-byte readbacks under
+`.trace/captures/NUCLEO-L552ZE-Q-20260930-access/`; ELF/profile snapshots,
+RAW/CSV, runtime and analysis reports under
+`.trace/captures/NUCLEO-L552ZE-Q-20260930-test/`. No firmware or Pack changes
+were required.
 
 ## Open work
 
