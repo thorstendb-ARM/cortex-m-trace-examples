@@ -1,6 +1,6 @@
 # Board support and references
 
-All seven targets use local device-based layers in `Board/<Board>/Board.clayer.yml`.
+All eight targets use local device-based layers in `Board/<Board>/Board.clayer.yml`.
 The solution selects each through `Board-Layer`. Device names and pinned DFPs
 below match the local configuration. Confirm the physical PCB revision separately
 from the catalog board revision.
@@ -12,6 +12,7 @@ from the catalog board revision.
 | [NUCLEO-F756ZG](../Board/NUCLEO-F756ZG/README.md) | `STM32F756ZGTx` | Cortex-M7 | `STM32F7xx_DFP@3.1.1` |
 | [STM32F429I-DISCO](../Board/STM32F429I-DISCO/README.md) | `STM32F429ZITx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [NUCLEO-F401RE](../Board/NUCLEO-F401RE/README.md) | `STM32F401RETx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
+| [NUCLEO-F446RE](../Board/NUCLEO-F446RE/README.md) | `STM32F446RETx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [STM32H7B3I-DK](../Board/STM32H7B3I-DK/README.md) | `STM32H7B3LIHxQ` | Cortex-M7 | `STM32H7xx_DFP@4.1.3` |
 | [STM32F4-DISCO](../Board/STM32F4-DISCO/README.md) | `STM32F407VGTx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 
@@ -123,6 +124,23 @@ Catalog reference: `STMicroelectronics::NUCLEO-F401RE:Rev.C`, MB1136, STM32F401R
 
 Use ES0299 for the fitted xE device; ES0222 covers xB/xC. Connector, jumper and
 power names are in the [MB1136 wiring table](ST_BOARD_BRINGUP.md#nucleo-f401re--mb1136).
+
+### NUCLEO-F446RE
+
+The board is MB1136 with an STM32F446RET6 and an onboard ST-LINK/V2-1. ST lists
+MB1136-F446RE-C03 and C04 main-board revisions; the physical revision of the
+tested board was not visually inspected.
+
+| Reference | Document |
+| --- | --- |
+| Board/manual | [NUCLEO-F446RE](https://www.st.com/en/evaluation-tools/nucleo-f446re.html), [UM1724 Rev 17, MB1136](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf) |
+| Schematics | [MB1136-DEFAULT-C03](https://www.st.com/resource/en/schematic_pack/mb1136-default-c03_schematic.pdf), [C04](https://www.st.com/resource/en/schematic_pack/mb1136-default-c04_schematic.pdf); match the physical revision |
+| Datasheet | [DS10693, STM32F446xC/xE](https://www.st.com/resource/en/datasheet/stm32f446re.pdf) |
+| Reference manual | [RM0390](https://www.st.com/resource/en/reference_manual/rm0390-stm32f446xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) |
+| Errata | [ES0298](https://www.st.com/resource/en/errata_sheet/es0298-stm32f446xcxe-device-errata-stmicroelectronics.pdf) |
+
+Use the [MB1136 F446 wiring table](ST_BOARD_BRINGUP.md#nucleo-f446re--mb1136)
+for the onboard ST-LINK and PB3/SWO route.
 
 ### STM32H7B3I-DK
 

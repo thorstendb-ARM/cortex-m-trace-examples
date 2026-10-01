@@ -33,6 +33,10 @@
         "sha256": "96141bb34644e1f1278af68da9ee8e1f873adf126017aabad5262d32ccce8179",
         "bytes": 644303
       },
+      "Include/stm32f446xx.h": {
+        "sha256": "801bae2a07fb7d61ce78512cee4d0c761e7b6cc7a3c7c74437a59a05af70e58a",
+        "bytes": 1216679
+      },
       "Source/Templates/gcc/startup_stm32f407xx.s": {
         "sha256": "430f14fd00db0f7aa88f354aee54064efb582ddc4cc264fb8e435dc7d7a2f53d",
         "bytes": 22858
@@ -44,6 +48,10 @@
       "Source/Templates/gcc/startup_stm32f401xe.s": {
         "sha256": "ab49e36ce3174819abbb275e4342af602b52e14a981fca9e2c22d7f09ad24af8",
         "bytes": 20084
+      },
+      "Source/Templates/gcc/startup_stm32f446xx.s": {
+        "sha256": "448435eb5d2ffe063490bcac42b9c861461ce05528141d87e62f8425c00131f8",
+        "bytes": 24403
       }
     }
   },

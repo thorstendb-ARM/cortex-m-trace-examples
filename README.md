@@ -6,7 +6,7 @@ bring-up project or a reference example, and is currently not intended as a
 starting point for customer projects.
 
 A common firmware baseline for testing trace across Cortex-M boards and debug
-probes. One **CMSIS solution** builds a shared **RTX5 application** through seven
+probes. One **CMSIS solution** builds a shared **RTX5 application** through eight
 local board layers, covering Cortex-M4, Cortex-M7 and Cortex-M33.
 
 The workload updates sine and deterministic-noise variables every 100 ms for DWT
@@ -26,6 +26,7 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 | [NUCLEO-F756ZG](Board/NUCLEO-F756ZG/README.md) | Cortex-M7 | `ULINKplus`, `STLink` |
 | [STM32F429I-DISCO](Board/STM32F429I-DISCO/README.md) | Cortex-M4 | `ULINKplus`, `STLink` |
 | [NUCLEO-F401RE](Board/NUCLEO-F401RE/README.md) | Cortex-M4 | `ULINKplus`, `STLink` |
+| [NUCLEO-F446RE](Board/NUCLEO-F446RE/README.md) | Cortex-M4 | `STLink` |
 | [STM32H7B3I-DK](Board/STM32H7B3I-DK/README.md) | Cortex-M7 | `ULINKplus` |
 | [STM32F4-DISCO](Board/STM32F4-DISCO/README.md), MB997 B-02 | Cortex-M4 | `ULINKplus`, `STLink` |
 
@@ -83,7 +84,7 @@ If your agent does not discover repository skills, ask it to read the linked
 | File or directory | Purpose |
 | --- | --- |
 | `Trace.csolution.yml`, `Projects/TraceDemo/TraceDemo.cproject.yml` | Targets, debugger sets, common application and RTX5 components |
-| `Common/`, `Board/` | Shared application and seven local board layers |
+| `Common/`, `Board/` | Shared application and eight local board layers |
 | `.cmsis/`, `Trace.cbuild-pack.yml`, `vcpkg-configuration.json` | Trace/debug profiles and pinned dependencies |
 | [DESIGN.md](docs/DESIGN.md) | Agreed requirements, architecture and how the baseline was assembled |
 | [BUILD.md](docs/BUILD.md), [DEBUG_PROBES.md](docs/DEBUG_PROBES.md) | Tool setup, builds and switching probes |

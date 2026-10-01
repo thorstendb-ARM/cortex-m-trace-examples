@@ -43,6 +43,15 @@ match the designators to the physical board revision.
 - **CN1:** ST-LINK USB power; **JP5 pins 1–2 (U5V)** and **JP6 closed**.
 - Solder bridges **SB12 closed** for reset and **SB15 closed** for SWO.
 
+### NUCLEO-F446RE / MB1136
+
+- Use the onboard **ST-LINK/V2-1** through **CN1** USB.
+- **CN2:** both jumpers **closed** for the onboard STM32 target.
+- **JP5:** pins **1–2 (U5V)**; **JP6 closed** for USB power.
+- Solder bridges **SB12 closed** for reset and **SB15 closed** for PB3/SWO.
+
+See [UM1724 Rev 17, pp. 16–26](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf#page=16).
+
 ### STM32F4-DISCO / MB997 B-02
 
 - **CN2:** 6-pin SWD/SWO adapter connection; pins 1–6 are VDD_TARGET, SWCLK,

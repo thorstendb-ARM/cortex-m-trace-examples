@@ -1,7 +1,8 @@
 # Validation
 
-Status: **2026-09-30**. Build, Flash loading/readback and RTX5 execution passed
-on all seven boards: the original six on 2026-09-28, STM32F4-DISCO on 2026-09-29.
+Status: **2026-10-01**. Build, Flash loading/readback and RTX5 execution passed
+on all eight boards: the original six on 2026-09-28, STM32F4-DISCO on 2026-09-29,
+and NUCLEO-F446RE on 2026-10-01.
 Both debuggers use the same image where tested. Board prerequisites
 and configuration are in [Board support](BOARD_SUPPORT.md); capture settings and
 commands are in [Debugger profiles](DEBUG_PROBES.md) and [Trace workflow](TRACE_APP.md).
@@ -21,6 +22,7 @@ A PASS does not establish complete capture from reset or repeatable start/pause/
 | NUCLEO-F756ZG | PASS | PASS | ULINK+: incomplete pause packet, corrupted PC at end despite decoder exit 0. ST-LINK: pause passes, end incomplete |
 | STM32F429I-DISCO | FAIL | PASS | ULINK+: initial-sync and final-packet errors. ST-LINK: one pause → end sequence passes |
 | NUCLEO-F401RE | PASS | PASS | ULINK+: incomplete pause packet; full end-packet checks pending. ST-LINK: one pause → end sequence passes |
+| NUCLEO-F446RE | — | PASS | IDE test pending; command-line server shutdown reported an SWV-reader assertion after the valid capture was flushed |
 | STM32H7B3I-DK | FAIL | — | ULINK+: incomplete/malformed packets at pause/end |
 | STM32F4-DISCO (MB997 B-02) | PASS | PASS | ULINK+: unexpected ITM26 records at pause/resume boundaries; incomplete pause/end packets. ST-LINK: pause passes, end incomplete |
 
@@ -82,6 +84,28 @@ Local evidence (ignored by Git): recovery logs and option-byte readbacks under
 RAW/CSV, runtime and analysis reports under
 `.trace/captures/NUCLEO-L552ZE-Q-20260930-test/`. No firmware or Pack changes
 were required.
+
+## NUCLEO-F446RE ST-LINK validation — 2026-10-01
+
+**Build, Flash readback, RTX5 execution and controlled SWO: PASS.** The connected
+NUCLEO-F446RE used its onboard ST-LINK/V2-1 with firmware `V2J43M28`. pyOCD
+identified `STM32F446RETx`, Cortex-M4 r0p1, four DWT watchpoints, ITM, TPIU and
+ETM. The linked image used 15,008 bytes of Flash; all loadable sections matched
+the target readback.
+
+Runtime inspection reported `g_app_state=1`, a 16 MHz core clock,
+`g_trace_itm_dropped=0`, and `CFSR=HFSR=0`. An approximately 18 s command-line
+capture at 16 MHz core clock / 1 Mbaud SWO produced 147,677 bytes: 180 valid
+samples each of the sine and deterministic-noise sequences, 90 consecutive ITM1
+values (3–92), and 17,582 PC samples within executable ELF text. Median DWT
+intervals were 99.926 ms and the ITM median was 199.988 ms. ctrace reported no
+decoder diagnostic or overflow records.
+
+The capture began after the first application updates, so it does not establish
+complete delivery from reset. IDE pause/end conversion remains untested. Stopping
+the command-line GDB server with Ctrl-C logged an SWV-reader assertion after the
+RAW file was flushed; the resulting RAW decoded successfully and passed the
+checks above.
 
 ## Open work
 

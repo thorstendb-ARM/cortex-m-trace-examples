@@ -25,6 +25,7 @@ type are connected, select the intended probe before loading an image.
 | NUCLEO-F756ZG | `ULINKplus`, `STLink` | 16 MHz |
 | STM32F429I-DISCO | `ULINKplus`, `STLink` | 16 MHz |
 | NUCLEO-F401RE | `ULINKplus`, `STLink` | 16 MHz |
+| NUCLEO-F446RE | `STLink` | 16 MHz |
 | STM32H7B3I-DK | `ULINKplus` (unnamed set) | 64 MHz |
 | STM32F4-DISCO (MB997 B-02) | `ULINKplus`, `STLink` | 16 MHz |
 

@@ -153,6 +153,24 @@ solution:
                 input-clock: 16000000
                 output-clock: 1000000
 
+    - type: NUCLEO-F446RE
+      device: STMicroelectronics::STM32F446RETx
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/NUCLEO-F446RE/Board.clayer.yml
+      target-set:
+        - set: STLink
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ST-Link@pyOCD
+            protocol: swd
+            clock: 4000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+
     - type: STM32H7B3I-DK
       device: STMicroelectronics::STM32H7B3LIHxQ
       variables:

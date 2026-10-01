@@ -12,7 +12,7 @@ HAL/LL or a complete Cube firmware package.
 | [cmsis-device-h7](https://github.com/STMicroelectronics/cmsis-device-h7/tree/v1.10.7) | v1.10.7 | [Apache-2.0](ST/cmsis-device-h7/LICENSE.md) |
 
 [ST/sources.json](ST/sources.json) records immutable commits, selected paths,
-SHA256 hashes and byte counts for all 28 files: licenses, family/device headers,
+SHA256 hashes and byte counts for all 30 files: licenses, family/device headers,
 GNU startup assembly and system templates. Other devices referenced by the
 umbrella headers are intentionally absent.
 
