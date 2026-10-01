@@ -3,9 +3,9 @@
 ## Environment and dependencies
 
 Use CMSIS-Toolbox 2.15.0, GNU Arm Toolchain 14.3.1, CMake 3.31.5 and Ninja 1.13.2.
-The CMSIS Solution extension supplies the toolbox; Arm Environment Manager reads
-the compiler, CMake and Ninja versions from
-[`vcpkg-configuration.json`](../vcpkg-configuration.json).
+Arm Environment Manager and CI install these versions from
+[`vcpkg-configuration.json`](../vcpkg-configuration.json); the CMSIS Solution
+extension can also supply the toolbox for local builds.
 
 For a manual installation, put those tools on `PATH`, set `CMSIS_COMPILER_ROOT`
 to the toolbox's `etc` directory and `GCC_TOOLCHAIN_14_3_1` to the compiler's `bin`

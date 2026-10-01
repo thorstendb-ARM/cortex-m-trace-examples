@@ -1,0 +1,56 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.context }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        context:
+          - TraceDemo.Debug+MCBSTM32F400
+          - TraceDemo.Debug+NUCLEO-F401RE
+          - TraceDemo.Debug+NUCLEO-F446RE
+          - TraceDemo.Debug+NUCLEO-F756ZG
+          - TraceDemo.Debug+NUCLEO-L552ZE-Q
+          - TraceDemo.Debug+STM32F4-DISCO
+          - TraceDemo.Debug+STM32F429I-DISCO
+          - TraceDemo.Debug+STM32H7B3I-DK
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # vcpkg removed the artifact feature after July 1, 2026.
+      - name: Install vcpkg
+        uses: ARM-software/cmsis-actions/setup-vcpkg@v1
+        with:
+          version: 2026.04.27
+
+      - name: Activate build environment
+        uses: ARM-software/cmsis-actions/vcpkg@v1
+        with:
+          config: ./vcpkg-configuration.json
+          cache: "-tools"
+
+      - name: Build
+        run: >-
+          cbuild Trace.csolution.yml
+          --context '${{ matrix.context }}'
+          --packs
+          --frozen-packs
+          --update-rte
