@@ -17,6 +17,10 @@ hardware results and capture limitations are in [Validation](VALIDATION.md).
 - Run separate sine and deterministic-noise threads at 100 ms and an ITM channel 1
   counter thread at 200 ms. Configure two DWT sources, PC sampling and timestamps
   through the Trace Generation view and `.ctrace.yml`.
+- Provide an L552-only `ULINKplus StackCorruption` target set with a fourth,
+  256-byte-stack thread that deliberately corrupts its RTX stack magic. Capture
+  the writing PC through a single DWT watch over SWO, with other trace sources
+  disabled.
 - Keep trace initialization in the debugger. Firmware writes the watched variables
   and makes nonblocking ITM writes; it does not enable or configure the trace path.
 - Use ULINK+ through pyOCD as the baseline. Provide ST-LINK profiles with a lower
@@ -38,8 +42,8 @@ then NUCLEO-F446RE.
 
 | Element | Responsibility |
 | --- | --- |
-| `Trace.csolution.yml` | Device-based targets, Debug build, layer selection and debugger sets |
-| `Projects/TraceDemo/TraceDemo.cproject.yml` | One application image per selected board; shared sources and CMSIS/RTX components |
+| `Trace.csolution.yml` | Device-based targets, Debug and L552-only StackCorruption builds, layer selection and debugger sets |
+| `Projects/TraceDemo/TraceDemo.cproject.yml` | One application image per selected context; shared sources and CMSIS/RTX components |
 | `Board/<board>/Board.clayer.yml` | Device header/startup/system selection, board `main()`, target adaptation and linker regions |
 | `Common/App`, `Common/Workloads`, `Common/Trace` | RTX startup, periodic signal generation and nonblocking ITM output |
 | `Projects/TraceDemo/RTE/CMSIS` | Shared RTX5 component configuration |
@@ -61,6 +65,11 @@ The handover is an ordinary C call:
 Reset → device SystemInit / C runtime → board main()
       → target_init() → shared app_main() → RTX5 and the three signal threads
 ```
+
+The L552 `StackCorruption` context additionally creates its fault-injection thread.
+The normal `Debug` contexts exclude that source and thread. See the
+[stack-corruption workflow](TRACE_APP.md#stack-corruption-watch-nucleo-l552ze-q)
+for the injected store and watch-only trace profile.
 
 `target_init()` retains the vendor clock baseline and updates `SystemCoreClock`.
 RTX5/CMSIS OS Tick supply SVC, PendSV and SysTick handling. The Trace application
