@@ -13,6 +13,8 @@
 compile_commands.json
 # Context headers are regenerated; component configuration is versioned.
 **/RTE/_*/
+# CMSIS-generated configuration baselines and update copies.
+*.base@*
 *.update@*
 .vscode/cmsis.json
 .DS_Store

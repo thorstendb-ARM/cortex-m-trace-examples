@@ -98,8 +98,9 @@ selection. Each set references the same `TraceDemo.Debug` image.
 Configure SWD and SWO clocks from the verified hardware and probe capabilities;
 keep solution transport clocks and profile timestamps consistent. Existing
 profiles are a starting point, not evidence that an unknown board supports those
-rates. Obtain the Pack's `.dbgconf` defaults and retain their base files when
-CMSIS generates them.
+rates. Obtain the Pack's `.dbgconf` defaults and keep the active configuration.
+Generated `.base@*` and `.update@*` comparison files are ignored; do not add them
+to version control.
 
 Create `.cmsis/Trace+<target>@<set>.ctrace.yml` for each named set, following
 TRACE_APP.md. Use `g_trace_sine` and `g_trace_noise` symbol names, ITM channel 1,
