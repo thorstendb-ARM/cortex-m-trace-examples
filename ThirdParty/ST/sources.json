@@ -79,6 +79,38 @@
       }
     }
   },
+  "g4": {
+    "repository": "https://github.com/STMicroelectronics/cmsis-device-g4",
+    "tag": "v1.2.6",
+    "commit": "25664ddc3a7624ae9627ae8c4c672073dc5b2539",
+    "license": "Apache-2.0",
+    "files": {
+      "LICENSE.md": {
+        "sha256": "44fd163ed2e04fe99f519f1093c2c39b21d9cc9371071de902ff0c2c8c3c57dc",
+        "bytes": 9753
+      },
+      "Include/stm32g4xx.h": {
+        "sha256": "493603c55af538bc431713b4f9880b5e242447cea232ca7459d3ca59c71dd48d",
+        "bytes": 8920
+      },
+      "Include/system_stm32g4xx.h": {
+        "sha256": "36304c07e9cee84064015ebd7ae517af6f466c466c1bbf5e342c57a296601db2",
+        "bytes": 2252
+      },
+      "Source/Templates/system_stm32g4xx.c": {
+        "sha256": "1de96c381d922635dabc0836d315d66c99b4e9d4a407fef6ee6f5c4e32b0791a",
+        "bytes": 10446
+      },
+      "Include/stm32g474xx.h": {
+        "sha256": "e7e5851721452c415c627e233d0a617b72ba891718a4f12a495b20dee25d82b0",
+        "bytes": 1392046
+      },
+      "Source/Templates/gcc/startup_stm32g474xx.s": {
+        "sha256": "2d1952a86701643338fbe284341c9099f96a52608d40cbda35212bf14375ad2a",
+        "bytes": 15535
+      }
+    }
+  },
   "l5": {
     "repository": "https://github.com/STMicroelectronics/cmsis-device-l5",
     "tag": "v1.0.7",

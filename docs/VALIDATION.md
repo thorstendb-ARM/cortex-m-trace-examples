@@ -1,7 +1,7 @@
 # Validation
 
-Status: **2026-09-29**. Build, Flash loading/readback and RTX5 execution passed
-on all seven boards: the original six on 2026-09-28, STM32F4-DISCO on 2026-09-29.
+Status: **2026-10-08**. Build, Flash loading/readback and RTX5 execution passed
+on seven previously supported boards: the original six on 2026-09-28, STM32F4-DISCO on 2026-09-29.
 Both debuggers use the same image where tested. Board prerequisites
 and configuration are in [Board support](BOARD_SUPPORT.md); capture settings and
 commands are in [Debugger profiles](DEBUG_PROBES.md) and [Trace workflow](TRACE_APP.md).
@@ -18,6 +18,7 @@ A PASS does not establish complete capture from reset or repeatable start/pause/
 | MCBSTM32F400 | PASS | — | ULINK+: automatic CSV at pause/end verified; initial-sync loss and incomplete end packet |
 | NUCLEO-L552ZE-Q | OPEN | PASS | ULINK+: automatic CSV verified; packet-integrity checks pending. ST-LINK: IDE test pending |
 | NUCLEO-F756ZG | PASS | PASS | ULINK+: incomplete pause packet, corrupted PC at end despite decoder exit 0. ST-LINK: pause passes, end incomplete |
+| NUCLEO-G474RE | — | — | Board support added; build and hardware trace tests pending |
 | STM32F429I-DISCO | FAIL | PASS | ULINK+: initial-sync and final-packet errors. ST-LINK: one pause → end sequence passes |
 | NUCLEO-F401RE | PASS | PASS | ULINK+: incomplete pause packet; full end-packet checks pending. ST-LINK: one pause → end sequence passes |
 | STM32H7B3I-DK | FAIL | — | ULINK+: incomplete/malformed packets at pause/end |

@@ -1,7 +1,7 @@
 # Cortex-M Trace Examples
 
-A common firmware baseline for testing trace across Cortex-M boards and debug
-probes. One **CMSIS solution** builds a shared **RTX5 application** through seven
+ A common firmware baseline for testing trace across Cortex-M boards and debug
+ probes. One **CMSIS solution** builds a shared **RTX5 application** through eight
 local board layers, covering Cortex-M4, Cortex-M7 and Cortex-M33.
 
 The workload updates sine and deterministic-noise variables every 100 ms for DWT
@@ -19,6 +19,7 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 | [MCBSTM32F400](Board/MCBSTM32F400/README.md) | Cortex-M4 | `ULINKplus` |
 | [NUCLEO-L552ZE-Q](Board/NUCLEO-L552ZE-Q/README.md) | Cortex-M33, TrustZone off | `ULINKplus`, `STLink` |
 | [NUCLEO-F756ZG](Board/NUCLEO-F756ZG/README.md) | Cortex-M7 | `ULINKplus`, `STLink` |
+| [NUCLEO-G474RE](Board/NUCLEO-G474RE/README.md) | Cortex-M4 | `ULINKplus`, `STLink` |
 | [STM32F429I-DISCO](Board/STM32F429I-DISCO/README.md) | Cortex-M4 | `ULINKplus`, `STLink` |
 | [NUCLEO-F401RE](Board/NUCLEO-F401RE/README.md) | Cortex-M4 | `ULINKplus`, `STLink` |
 | [STM32H7B3I-DK](Board/STM32H7B3I-DK/README.md) | Cortex-M7 | `ULINKplus` |

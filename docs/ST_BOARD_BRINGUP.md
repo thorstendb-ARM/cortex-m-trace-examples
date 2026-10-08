@@ -19,6 +19,13 @@ for the adapter and separate voltage-reference lead.
 - **CN4:** both jumpers **closed**.
 - **CN1:** ST-LINK USB power; **JP3 = U5V, pins 3–4 (middle position)**.
 
+### NUCLEO-G474RE / MB1367
+
+- **CN4:** SWD/SWO adapter connection.
+- **CN2:** both jumpers **closed**.
+- **CN1:** ST-LINK USB power; **JP5 pins 1–2 (U5V)** and **JP6 closed**.
+- Solder bridge **SB22 closed** routes PB3/SWO.
+
 ### NUCLEO-L552ZE-Q / MB1361
 
 - **CN5:** SWD/SWO adapter connection.

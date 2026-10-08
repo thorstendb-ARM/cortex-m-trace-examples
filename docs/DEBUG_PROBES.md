@@ -23,6 +23,7 @@ type are connected, select the intended probe before loading an image.
 | MCBSTM32F400 | `ULINKplus` (unnamed set) | 16 MHz |
 | NUCLEO-L552ZE-Q | `ULINKplus`, `STLink` | 4 MHz |
 | NUCLEO-F756ZG | `ULINKplus`, `STLink` | 16 MHz |
+| NUCLEO-G474RE | `ULINKplus`, `STLink` | 16 MHz |
 | STM32F429I-DISCO | `ULINKplus`, `STLink` | 16 MHz |
 | NUCLEO-F401RE | `ULINKplus`, `STLink` | 16 MHz |
 | STM32H7B3I-DK | `ULINKplus` (unnamed set) | 64 MHz |
