@@ -12,9 +12,6 @@ local board layers, covering Cortex-M4, Cortex-M7 and Cortex-M33.
 The workload updates sine and deterministic-noise variables every 100 ms for DWT
 and emits an ITM channel 1 counter every 200 ms. Debugger profiles add PC sampling
 and timestamps. pyOCD captures SWO; ctrace converts recordings to CSV.
-NUCLEO-L552ZE-Q also provides `ULINKplus StackCorruption`: a fourth thread
-deliberately overwrites its RTX stack magic word, and a single DWT watch reports
-the writing PC over SWO. See the [stack-corruption workflow](docs/TRACE_APP.md#stack-corruption-watch-nucleo-l552ze-q).
 
 **Status: experimental SWO demo.** Trace Generation and automatic CSV conversion
 require the [listed development tool versions](docs/BUILD.md#trace-toolchain).
@@ -51,9 +48,8 @@ Missing CMSIS packs are installed by `cbuild --packs` using the pinned dependenc
 1. Open this folder in VS Code and activate the build environment described in
    the [build guide](docs/BUILD.md).
 2. Select `Trace.csolution.yml` as the active solution. Open **CMSIS: Manage Solution
-   Settings**, choose a board and its target set (`ULINKplus`, `STLink`, or the
-   L552-only `ULINKplus StackCorruption`). Sets use automatic probe selection;
-   select the intended probe locally when several are connected. Check the
+   Settings**, choose a board and, where available, the `ULINKplus` or `STLink` set.
+   Both use automatic probe selection. Check the
    board README linked above and the [ST board wiring notes](docs/ST_BOARD_BRINGUP.md).
 3. Build the selected target. Enable `vscode-cmsis-debugger.enableTraceGenerationView`
    in local VS Code settings. In the CMSIS Debugger **Trace Generation** view,
@@ -64,22 +60,14 @@ Missing CMSIS packs are installed by `cbuild --packs` using the pinned dependenc
    trigger CSV conversion when new trace data is available. Inspect decoder errors
    as well as the CSV. See the [trace workflow](docs/TRACE_APP.md).
 
-For an agent-driven stack-magic capture, invoke `Use $trace-stack-magic-corruption-test` with the
-intended target set active. The project
-[trace-stack-magic-corruption-test skill](.agents/skills/trace-stack-magic-corruption-test/SKILL.md) checks its
-trace watch, runs and ends debugging, then creates a Markdown report with one
-section per CSV entry, source text and project-relative locations. The CSV remains
-unchanged. See the [workflow](docs/TRACE_APP.md#stack-magic-agent-workflow).
-
 Command-line build from an activated tool environment:
 
 ```sh
 cbuild Trace.csolution.yml --active 'STM32F429I-DISCO@STLink' --packs --frozen-packs --update-rte
 ```
 
-The regular `ULINKplus` and `STLink` sets share the board's `Debug` image.
-`ULINKplus StackCorruption` selects the separate `StackCorruption` build.
-Changing boards selects another local board layer. Firmware produces the signals; Pack
+Changing the debugger set keeps the same application image for that board. Changing
+boards selects another local board layer. Firmware produces the signals; Pack
 sequences, pyOCD and ctrace configuration own trace initialization.
 
 ## Add a board
