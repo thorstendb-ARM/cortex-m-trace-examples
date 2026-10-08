@@ -4,9 +4,6 @@
 #include "target.h"
 #include "dwt_workload.h"
 #include "trace.h"
-#if defined(TRACE_STACK_CORRUPTION)
-#include "stack_corruption.h"
-#endif
 
 enum app_state {
     APP_STARTING,
@@ -118,13 +115,6 @@ int app_main(void)
         g_app_state = APP_ERROR;
         return -1;
     }
-
-#if defined(TRACE_STACK_CORRUPTION)
-    if (!stack_corruption_start(2U * tick_hz)) {
-        g_app_state = APP_ERROR;
-        return -1;
-    }
-#endif
 
     g_app_state = APP_RUNNING;
     (void)osKernelStart();

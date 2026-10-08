@@ -12,11 +12,6 @@ solution:
     - type: Debug
       debug: on
       optimize: none
-    - type: StackCorruption
-      debug: on
-      optimize: none
-      define:
-        - TRACE_STACK_CORRUPTION: 1
 
   target-types:
     - type: MCBSTM32F400
@@ -50,20 +45,6 @@ solution:
             name: ULINKplus@pyOCD
             protocol: swd
             clock: 10000000
-            trace:
-              - swo-uart:
-                mode: file
-                input-clock: 4000000
-                output-clock: 1000000
-        - set: ULINKplus StackCorruption
-          images:
-            - project-context: TraceDemo.StackCorruption
-          debugger:
-            name: ULINKplus@pyOCD
-            protocol: swd
-            clock: 10000000
-            gdbserver:
-              - port: 43333
             trace:
               - swo-uart:
                 mode: file
@@ -270,6 +251,3 @@ solution:
 
   projects:
     - project: Projects/TraceDemo/TraceDemo.cproject.yml
-      for-context:
-        - .Debug
-        - .StackCorruption+NUCLEO-L552ZE-Q

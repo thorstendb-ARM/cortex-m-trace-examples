@@ -1,10 +1,8 @@
 # Debugger selection
 
 Debugger target sets in [`Trace.csolution.yml`](../Trace.csolution.yml) select the
-probe and, where configured, trace profile. The regular `ULINKplus` and `STLink`
-sets use the same board layer and `Debug` application image. L552's
-`ULINKplus StackCorruption` selects a separate build and watch-only profile.
-Build commands are in [BUILD.md](BUILD.md); measured results are in
+probe and trace profile. Both probes use the same board layer and application
+image. Build commands are in [BUILD.md](BUILD.md); measured results are in
 [Validation](VALIDATION.md).
 
 ## Configured probes and profiles
@@ -14,7 +12,6 @@ All sets use SWD and SWO UART/NRZ file capture at **1 Mbaud**.
 | Probe | Debugger name | Selection | SWD clock | PC period |
 | --- | --- | --- | --- | --- |
 | ULINK+ | `ULINKplus@pyOCD` | Automatic | 10 MHz; MCB uses the tool default | 8192 cycles |
-| ULINK+ (L552 StackCorruption) | `ULINKplus@pyOCD` | Automatic | 10 MHz | Disabled |
 | ST-LINK | `ST-Link@pyOCD` | Automatic | 4 MHz | 16384 cycles |
 
 Both probe types use automatic selection without a fixed `probe-id`.
@@ -24,7 +21,7 @@ type are connected, select the intended probe before loading an image.
 | Target | Available target sets | Core / timestamp clock |
 | --- | --- | --- |
 | MCBSTM32F400 | `ULINKplus` (unnamed set) | 16 MHz |
-| NUCLEO-L552ZE-Q | `ULINKplus`, `STLink`, `ULINKplus StackCorruption` | 4 MHz (no timestamps in StackCorruption) |
+| NUCLEO-L552ZE-Q | `ULINKplus`, `STLink` | 4 MHz |
 | NUCLEO-F756ZG | `ULINKplus`, `STLink` | 16 MHz |
 | NUCLEO-G474RE | `ULINKplus`, `STLink` | 16 MHz |
 | STM32F429I-DISCO | `ULINKplus`, `STLink` | 16 MHz |
@@ -37,12 +34,9 @@ For the two unnamed sets, select `--active MCBSTM32F400` or
 `--active STM32H7B3I-DK`, without an `@ULINKplus` suffix. The other boards
 use named sets, for example `--active NUCLEO-F756ZG@ULINKplus`.
 
-For the regular STM32 `ULINKplus` and `STLink` profiles, only the PC-sampling period differs;
+Only the PC-sampling period differs between a board's two trace profiles;
 ST-LINK uses half the PC sample rate. The common sources and timestamp/sync
 settings are described in [Trace application](TRACE_APP.md#configuration-ownership).
-The L552 `ULINKplus StackCorruption` profile instead enables one write watch on
-the additional thread's stack magic word, with `output: PC`; see the
-[experiment workflow](TRACE_APP.md#stack-corruption-watch-nucleo-l552ze-q).
 
 ## Switch sets
 

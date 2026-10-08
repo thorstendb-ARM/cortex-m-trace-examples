@@ -26,12 +26,6 @@ project:
         - file: ../../Common/Workloads/dwt_workload.c
         - file: ../../Common/Include/dwt_workload.h
 
-    - group: Stack Corruption
-      for-context: .StackCorruption+NUCLEO-L552ZE-Q
-      files:
-        - file: ../../Common/Workloads/stack_corruption.c
-        - file: ../../Common/Include/stack_corruption.h
-
     - group: Trace Output
       files:
         - file: ../../Common/Trace/itm_output.c
