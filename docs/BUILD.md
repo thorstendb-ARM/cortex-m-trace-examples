@@ -71,8 +71,9 @@ selects the matching local layer automatically.
 ELF, HEX and BIN outputs are in `out/TraceDemo/<target>/Debug/`; intermediates and
 link maps are under `tmp/`. Build/run descriptions, context-specific RTE headers
 and `.trace/` runtime profiles are generated. Keep the solution, CProject, layers,
-pack lock, `RTX_Config.*` and their `.base@...` originals, `.cmsis/*.dbgconf*` and
-source `.cmsis/*.ctrace.yml` profiles under version control.
+pack lock, active `RTX_Config.c`/`RTX_Config.h`, `.cmsis/*.dbgconf` and source
+`.cmsis/*.ctrace.yml` profiles under version control. Generated `.base@*` and
+`.update@*` comparison files are ignored and are not kept in the repository.
 
 After a build or trace-profile edit, regenerate the trace runtime configuration
 from the current ELF as described in the [trace workflow](TRACE_APP.md#configure-and-generate-trace).
