@@ -1,6 +1,6 @@
 # Validation
 
-Status: **2026-10-05**. Build, Flash loading/readback and RTX5 execution passed
+Status: **2026-10-08**. Build, Flash loading/readback and RTX5 execution passed
 on all eight boards: the original six on 2026-09-28, STM32F4-DISCO on 2026-09-29,
 and NUCLEO-F446RE on 2026-10-01.
 The regular demo uses the same image with both debuggers where tested. Board prerequisites
@@ -23,6 +23,7 @@ This table covers the regular demo; the StackCorruption experiment has its own s
 | MCBSTM32F400 | PASS | — | ULINK+: automatic CSV at pause/end verified; initial-sync loss and incomplete end packet |
 | NUCLEO-L552ZE-Q | OPEN | PASS | ULINK+: automatic CSV verified; packet-integrity checks pending. ST-LINK: IDE test pending |
 | NUCLEO-F756ZG | PASS | PASS | ULINK+: incomplete pause packet, corrupted PC at end despite decoder exit 0. ST-LINK: pause passes, end incomplete |
+| NUCLEO-G474RE | — | — | Board support added; build and hardware trace tests pending |
 | STM32F429I-DISCO | FAIL | PASS | ULINK+: initial-sync and final-packet errors. ST-LINK: one pause → end sequence passes |
 | NUCLEO-F401RE | PASS | PASS | ULINK+: incomplete pause packet; full end-packet checks pending. ST-LINK: one pause → end sequence passes |
 | NUCLEO-F446RE | — | PASS | IDE test pending; command-line server shutdown reported an SWV-reader assertion after the valid capture was flushed |

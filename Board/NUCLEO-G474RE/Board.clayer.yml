@@ -1,0 +1,30 @@
+layer:
+  type: Board
+  description: Minimal CMSIS device support for NUCLEO-G474RE
+  for-device: STM32G474RETx
+
+  packs:
+    - pack: Keil::STM32G4xx_DFP@2.0.0
+
+  define:
+    - STM32G474xx
+    - CMSIS_device_header: '"stm32g4xx.h"'
+    - USER_VECT_TAB_ADDRESS
+
+  add-path:
+    - ../../ThirdParty/ST/cmsis-device-g4/Include
+
+  groups:
+    - group: Board
+      files:
+        - file: main.c
+        - file: target.c
+    - group: CMSIS Device
+      files:
+        - file: ../../ThirdParty/ST/cmsis-device-g4/Source/Templates/gcc/startup_stm32g474xx.s
+        - file: ../../ThirdParty/ST/cmsis-device-g4/Source/Templates/system_stm32g4xx.c
+
+  linker:
+    - script: ../Support/gcc_linker_script.ld.src
+      regions: regions.h
+      for-compiler: GCC

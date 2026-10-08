@@ -10,6 +10,7 @@ from the catalog board revision.
 | [MCBSTM32F400](../Board/MCBSTM32F400/README.md) | `STM32F407IGHx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [NUCLEO-L552ZE-Q](../Board/NUCLEO-L552ZE-Q/README.md) | `STM32L552ZETxQ` | Cortex-M33 | `STM32L5xx_DFP@2.0.0` |
 | [NUCLEO-F756ZG](../Board/NUCLEO-F756ZG/README.md) | `STM32F756ZGTx` | Cortex-M7 | `STM32F7xx_DFP@3.1.1` |
+| [NUCLEO-G474RE](../Board/NUCLEO-G474RE/README.md) | `STM32G474RETx` | Cortex-M4 | `STM32G4xx_DFP@2.0.0` |
 | [STM32F429I-DISCO](../Board/STM32F429I-DISCO/README.md) | `STM32F429ZITx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [NUCLEO-F401RE](../Board/NUCLEO-F401RE/README.md) | `STM32F401RETx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [NUCLEO-F446RE](../Board/NUCLEO-F446RE/README.md) | `STM32F446RETx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
@@ -90,6 +91,21 @@ Catalog reference: `STMicroelectronics::NUCLEO-F756ZG:Rev.B`, MB1137, STM32F756Z
 
 The [wiring guide](ST_BOARD_BRINGUP.md#nucleo-f756zg--mb1137) records
 the tested ULINK+ adapter and ST-LINK USB power arrangement.
+
+### NUCLEO-G474RE
+
+Catalog reference: `STMicroelectronics::NUCLEO-G474RE:Rev.C`, MB1367,
+STM32G474RET6.
+
+| Reference | Document |
+| --- | --- |
+| Board/manual | [NUCLEO-G474RE](https://www.st.com/en/evaluation-tools/nucleo-g474re.html), [UM2505, MB1367](https://www.st.com/resource/en/user_manual/um2505-stm32g4-nucleo64-boards-mb1367-stmicroelectronics.pdf) |
+| Schematic | [MB1367-G474RE-C01](https://www.st.com/resource/en/schematic_pack/mb1367-g474re-c01_schematic.pdf) |
+| Datasheet | [DS12288, STM32G474xB/C/E](https://www.st.com/resource/en/datasheet/stm32g474cb.pdf) |
+| Reference manual | [RM0440](https://www.st.com/resource/en/reference_manual/rm0440-stm32g4-series-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) |
+| Errata | [ES0393](https://www.st.com/resource/en/errata_sheet/es0393-stm32g4-series-device-errata-stmicroelectronics.pdf) |
+
+See the [MB1367 wiring notes](ST_BOARD_BRINGUP.md#nucleo-g474re--mb1367).
 
 ### STM32F429I-DISCO
 

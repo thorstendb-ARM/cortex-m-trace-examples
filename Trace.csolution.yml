@@ -112,6 +112,36 @@ solution:
                 input-clock: 16000000
                 output-clock: 1000000
 
+    - type: NUCLEO-G474RE
+      device: STMicroelectronics::STM32G474RETx
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/NUCLEO-G474RE/Board.clayer.yml
+      target-set:
+        - set: ULINKplus
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            clock: 10000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+        - set: STLink
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ST-Link@pyOCD
+            protocol: swd
+            clock: 4000000
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 16000000
+                output-clock: 1000000
+
     - type: STM32F429I-DISCO
       device: STMicroelectronics::STM32F429ZITx
       variables:
