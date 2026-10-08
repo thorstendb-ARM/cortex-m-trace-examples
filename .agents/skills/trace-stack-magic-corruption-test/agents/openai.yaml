@@ -1,0 +1,4 @@
+interface:
+  display_name: "Trace Stack Magic corruption test"
+  short_description: "Capture or explain an existing trace CSV in Markdown"
+  default_prompt: "Use $trace-stack-magic-corruption-test to capture the active target's stack-magic writes, or use an existing CSV when requested, and create and explain a Markdown report with one section per CSV record, leaving the CSV unchanged and creating no archives or other output files, then open the report in VS Code."

@@ -44,6 +44,13 @@ The debugger and pyOCD links identify source revisions; pyTS and ctrace link to
 releases. Together they describe the reference toolchain, not a stable debugger
 release.
 
+The L552 `StackCorruption` profile was built and tested on hardware with the
+installed validation tools: CMSIS Debugger `1.8.1-64-g28c1601`, pyOCD
+`0.45.2.dev36+g74e3290d8`, pyTS `0.6.1` and ctrace `0.4.0`. Its short capture
+requires `sync-on-run` support in trace generation and runtime setup; compatibility
+with the reference versions above has not been established for this profile.
+The capture results and remaining limitations are recorded in [Validation](VALIDATION.md#nucleo-l552ze-q-stackcorruption--2026-10-05).
+
 ## Build and select a target
 
 ```sh
@@ -53,6 +60,9 @@ cbuild Trace.csolution.yml --active MCBSTM32F400 --packs --frozen-packs --update
 # Select a board and named debugger set.
 cbuild Trace.csolution.yml --active 'NUCLEO-F756ZG@STLink' --packs --frozen-packs
 
+# Build the L552-only stack-corruption experiment.
+cbuild Trace.csolution.yml --active 'NUCLEO-L552ZE-Q@ULINKplus StackCorruption' --packs --frozen-packs
+
 # Build all Debug contexts.
 cbuild Trace.csolution.yml --context 'TraceDemo.Debug+*' --packs --frozen-packs
 ```
@@ -60,7 +70,10 @@ cbuild Trace.csolution.yml --context 'TraceDemo.Debug+*' --packs --frozen-packs
 `--active <target>` selects an unnamed target set; `--active '<target>@<set>'`
 selects a named debugger set. It also generates `out/Trace+<target>.cbuild-run.yml`
 for that selection. `--context` selects the project/build/target context matrix.
-Named sets reuse the same application image; see [debugger selection](DEBUG_PROBES.md).
+The regular `ULINKplus` and `STLink` sets reuse the board's `Debug` image.
+`NUCLEO-L552ZE-Q@ULINKplus StackCorruption` selects `TraceDemo.StackCorruption`,
+which defines `TRACE_STACK_CORRUPTION=1` and includes the additional thread.
+This build context is restricted to L552; see [debugger selection](DEBUG_PROBES.md).
 
 In VS Code, select `Trace.csolution.yml` as the active solution and choose the
 target/set in **CMSIS: Manage Solution Settings**. The `Board-Layer` variable
@@ -68,7 +81,8 @@ selects the matching local layer automatically.
 
 ## Generated files and editor setup
 
-ELF, HEX and BIN outputs are in `out/TraceDemo/<target>/Debug/`; intermediates and
+ELF, HEX and BIN outputs are in `out/TraceDemo/<target>/<build-type>/`
+(`Debug` or the L552-only `StackCorruption`); intermediates and
 link maps are under `tmp/`. Build/run descriptions, context-specific RTE headers
 and `.trace/` runtime profiles are generated. Keep the solution, CProject, layers,
 pack lock, active `RTX_Config.c`/`RTX_Config.h`, `.cmsis/*.dbgconf` and source
