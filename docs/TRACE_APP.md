@@ -79,12 +79,18 @@ for the measured result and remaining pause-boundary limitation.
 
 Invoke `Use $trace-stack-magic-corruption-test` to use the project
 [trace-stack-magic-corruption-test skill](../.agents/skills/trace-stack-magic-corruption-test/SKILL.md).
-It derives the profile and ELF from the active target set and keeps that
-selection. Before running, it checks that the stack-magic watch uses `access: W`,
+For a report from an existing CSV, request `Use $trace-stack-magic-corruption-test:
+create only the MD report from the existing CSV`. This mode uses the associated
+ELF and source without building, debugging, regenerating profiles or converting
+RAW. No board is required. When capture-time verification is unavailable, the
+report labels its use of the selected ELF and current source as unverified.
+
+The full capture workflow derives the profile and ELF from the active target set
+and keeps that selection. Before running, it checks that the stack-magic watch uses `access: W`,
 `size: 4` and `output: PC` and resolves to the intended stack word.
 
-The skill starts debugging, lets the application run, ends the debug session and
-waits for final CSV conversion. Its `report_trace.py` helper uses `addr2line`
+During a full capture, the skill starts debugging, lets the application run, ends
+the debug session and waits for final CSV conversion. Its `report_trace.py` helper uses `addr2line`
 with the matching ELF to create `.trace/<stem>.SWO.md`, leaving the CSV unchanged.
 Every CSV entry gets a section, including entries without a PC. Resolved source
 code appears first, followed by `project-relative/file:line`, the original trace
@@ -94,12 +100,12 @@ locations and adds a short explanation per entry, with relevant code context.
 It distinguishes initialization from corruption and separates recorded PCs from
 values or behavior inferred from the source.
 
-Original RAW/CSV, an ELF snapshot, a manifest and the Markdown report are retained
-under `.trace/captures/stack-magic-*`. At the end, the skill automatically opens
-the completed report in VS Code. In a headless environment it keeps the report
-and reports that opening was unavailable. Later captures replace the current `.trace/`
-CSV, so keep the archived result for comparison. The capture-boundary limitations
-above still apply.
+The Markdown report is the skill's only additional output file. Capture checks
+keep their hashes and state in memory; the skill creates no capture archive,
+manifest, ELF copy or check log. It uses the normal build/debug files in place
+and automatically opens the completed report in VS Code. In a headless environment
+it keeps the report and reports that opening was unavailable. Later captures
+replace the current files. The capture-boundary limitations above still apply.
 
 ## Configuration ownership
 

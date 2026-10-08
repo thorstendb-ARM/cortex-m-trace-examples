@@ -9,6 +9,9 @@ ctrace:
           access: W
           size: 4
           output: PC
+        - location: g_trace_itm_counter
+          access: W
+          output: PC+value
       itm:
         enable: 0x00000000
       pcsampling:
@@ -16,6 +19,7 @@ ctrace:
       synchronization:
         DWT: 16M
         sync-on-run: true
+
 # No timestamps, exception events, or other trace sources. pyTS clears the
 # previous ITM/DWT configuration before enabling this single data watch.
 # Protocol synchronization lets ctrace decode even this very short capture.

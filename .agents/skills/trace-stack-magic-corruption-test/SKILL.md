@@ -1,14 +1,20 @@
 ---
 name: trace-stack-magic-corruption-test
-description: Capture the stack-magic write trace for this project's active CMSIS target set, resolve recorded PCs with arm-none-eabi-addr2line, and create a separate Markdown report with source text, project-relative locations and source-based explanations, one section per CSV record. Keep the CSV unchanged and open the completed report in VS Code. Use to automate the existing StackCorruption experiment; it does not add targets or invent a missing trace watch.
+description: Capture the stack-magic write trace for this project's active CMSIS target set, or analyze an existing CSV without a build or debug session. Resolve recorded PCs with arm-none-eabi-addr2line, and create a separate Markdown report with source text, project-relative locations and source-based explanations, one section per CSV record. Keep the CSV unchanged, create no capture archives or sidecar files, and open the completed report in VS Code. Use to automate the existing StackCorruption experiment; it does not add targets or invent a missing trace watch.
 ---
 
 # Trace Stack Magic corruption test
 
 Run this repository's existing stack-corruption experiment for the **currently
-selected target and set**. Deliver the original SWO CSV and a separate Markdown
-report with one section per CSV record, including legitimate initialization writes
-and records without a PC. Never add columns to or rewrite the CSV.
+selected target and set**, or create a report from an existing CSV. Deliver a
+separate Markdown report with one section per CSV record, including legitimate
+initialization writes and records without a PC. Never add columns to or rewrite
+the CSV.
+
+The **only additional output file** is the Markdown report beside the selected
+CSV (normally `.trace/<stem>.SWO.md`). Use existing build/debug outputs in place.
+Do not create capture directories, ELF/profile copies, manifests, JSON result files or diagnostic logs. Keep verification state
+and tool diagnostics in memory/tool output. Leave existing archives untouched.
 
 The repository root contains `Trace.csolution.yml`. Read the
 [stack experiment](../../../docs/TRACE_APP.md#stack-corruption-watch-nucleo-l552ze-q)
@@ -16,7 +22,46 @@ and its [validation limits](../../../docs/VALIDATION.md#nucleo-l552ze-q-stackcor
 when preparing a capture. Do not encode the board, probe ID, ELF address or source
 line number from a previous run into the workflow.
 
-## Bind the active target and verify its trace
+## Choose the mode
+
+For "only create the MD", "use the existing CSV", "report only" or equivalent,
+use **report-only mode** below. An unspecified mode runs the full capture workflow.
+Both modes explain and automatically open the report.
+
+## Report only from an existing CSV
+
+1. Use the CSV named by the user; otherwise select the existing CSV for the active
+   target/set. Read local solution/runtime metadata to identify it. Require a
+   completed, stable CSV; do not change a running debug session to obtain one.
+2. Find the ELF associated with that CSV, preferably supplied by the user or
+   referenced by its existing runtime profile. Use the source tree and
+   `arm-none-eabi-addr2line` as in the full workflow. Do not choose an arbitrary
+   newer build; if the association is ambiguous, ask which ELF belongs to the CSV.
+   Successful address resolution alone does not prove the ELF matches the capture.
+3. Set `trace_report` to the CSV path with its `.csv` suffix replaced by `.md`.
+   Run the helper on these existing files:
+
+   ```sh
+   python3 .agents/skills/trace-stack-magic-corruption-test/scripts/report_trace.py \
+     --report-only --csv "$trace_csv" --elf "$trace_elf" \
+     --addr2line "$trace_addr2line" --source-root "$trace_workspace" \
+     --output "$trace_report"
+   ```
+
+   If verified state from that exact capture is still available in memory, pass
+   it with `--capture-state "$trace_state"`. Otherwise the report identifies its
+   ELF/source association as unverified and displays current source with that
+   limitation. Never manufacture capture-time verification from current hashes.
+4. Continue at **Report content and explanation** below. Retain the provenance
+   note when adding code context and explanations. Only summarize findings in
+   the supplied capture; do not claim a new successful hardware test.
+
+This mode does not build, flash, start/stop debugging, generate trace profiles,
+convert RAW, or run `capture_state.py`. It needs no connected board and does not
+require the current trace profile still to have the original watch enabled.
+Only the Markdown report is written; the CSV, ELF and source remain unchanged.
+
+## Bind the active target and verify its trace (full capture)
 
 Use `cmsis-debug-live` for hardware operations and the CMSIS Developer Assistant
 MCP tools for build/load/debug. Select this repository's VS Code window with
@@ -62,10 +107,10 @@ uses the user-requested `arm-none-eabi-addr2line` for offline PC resolution.
 The helpers require Python 3 and only its standard library. Use arguments, not
 shell interpolation of untrusted YAML/CSV contents. Quote paths containing spaces.
 
-Run `scripts/capture_manifest.py prepare` with the resolved values:
+Run `scripts/capture_state.py prepare` with the resolved values:
 
 ```sh
-python3 .agents/skills/trace-stack-magic-corruption-test/scripts/capture_manifest.py prepare \
+python3 .agents/skills/trace-stack-magic-corruption-test/scripts/capture_state.py prepare \
   --workspace "$trace_workspace" --target "$trace_target" \
   --elf "$trace_elf" --compile-commands "$trace_compile_commands" \
   --run-description "$trace_run" --source-profile "$trace_profile" \
@@ -73,10 +118,11 @@ python3 .agents/skills/trace-stack-magic-corruption-test/scripts/capture_manifes
   --raw "$trace_raw" --csv "$trace_csv"
 ```
 
-The returned manifest is in a unique `.trace/captures/stack-magic-*` directory.
-It records the exact ELF snapshot, profile hashes, compilation-source hashes and
-capture start time. Keep this manifest path for verification and the report.
-Prepare again after any build, profile or target change.
+Keep the returned JSON as `trace_state` in memory across tool calls. It records
+the selected ELF path, input/source hashes and capture start time without writing
+files. Pass that JSON directly to the following helpers; never save it to disk.
+Prepare again after any build, profile or target change. Keep sources unchanged
+between the build, capture and report; if they change, rebuild and capture again.
 
 - Check `get_session_status` and `list_breakpoints`. A clean capture must pass the
   corruption store without breakpoints or single stepping. Remove only this
@@ -91,12 +137,13 @@ Prepare again after any build, profile or target change.
   `stop_debugging`. The pause lets the existing IDE workflow convert the drained
   RAW; ending the session fixes the final input for the report.
   This experiment normally ends in `osRtxErrorNotify` after the deliberate error.
-- Run `capture_manifest.py verify --manifest "$trace_manifest"`. It waits up to
-  15 seconds for a fresh, nonempty, stable RAW/CSV pair and saves the unannotated
-  capture beside the manifest. Do not accept a previous CSV because it exists.
-  Inspect decoder diagnostics. If automatic conversion is missing or stale,
-  run the installed `ctrace` offline on this exact stem and final RAW/profile,
-  then verify again; report that manual fallback was used.
+- Run `capture_state.py verify --state-json "$trace_state"`. It waits up to
+  15 seconds for a fresh, nonempty, stable RAW/CSV pair and rechecks the inputs.
+  Replace the in-memory `trace_state` with its returned JSON, which includes the
+  final RAW/CSV hashes. Do not accept a previous CSV because it exists. Inspect
+  decoder diagnostics in tool output. If automatic conversion is missing or
+  stale, run the installed `ctrace` offline on this exact stem and final RAW/profile,
+  then verify again; report that manual fallback was used. Do not save check logs.
 
 ## Resolve PCs and write the Markdown report
 
@@ -104,19 +151,20 @@ After the session and final conversion have ended, run:
 
 ```sh
 python3 .agents/skills/trace-stack-magic-corruption-test/scripts/report_trace.py \
-  --csv "$trace_csv" --elf "$trace_snapshot_elf" \
+  --csv "$trace_csv" --elf "$trace_elf" \
   --addr2line "$trace_addr2line" --source-root "$trace_workspace" \
-  --source-manifest "$trace_manifest" --output "$trace_report"
+  --capture-state "$trace_state" --output "$trace_report"
 ```
 
 Set `trace_report` to `.trace/<stem>.SWO.md`; by default the helper replaces the
-input CSV's `.csv` suffix with `.md`. Take `trace_snapshot_elf` from the manifest's
-`elf`, not whichever build is now newest. The helper checks ELF and captured CSV
-hashes, batches distinct PCs through `addr2line`, and writes only the Markdown
-file atomically. **Leave CSV bytes, columns, cells and row order unchanged.**
-Use trace PCs exactly as recorded; do not subtract a Thumb or return-address
-offset. If an old capture was enriched by the previous skill version, use its
-archived original CSV and matching manifest, without rewriting the current CSV.
+input CSV's `.csv` suffix with `.md`. Use the ELF selected before this capture.
+The helper checks its hash and the final CSV hash against the in-memory state,
+batches distinct PCs through `addr2line`, and writes only the Markdown file.
+**Leave CSV bytes, columns, cells and row order unchanged.** Use trace PCs exactly
+as recorded; do not subtract a Thumb or return-address offset. If the matching
+ELF or source is no longer available, report that limitation instead of guessing.
+
+## Report content and explanation
 
 Create exactly one `## Entry N` section per CSV data record, in original order,
 including duplicates, decoder diagnostics and records without a PC. The header
@@ -138,12 +186,14 @@ notes. Make all source paths project-relative, including `../` for external
 Pack files. Pair each inline frame's source and location within the same entry.
 For missing/invalid PCs or unavailable/changed source text, state the actual
 status and retain the original CSV information; never invent a source line.
-Verify source text against the captured compilation inputs; an uncaptured inline
-header can have a valid DWARF location without verified source text. Repeating
-the helper with unchanged inputs must produce identical base Markdown.
+Use capture-time source hashes when available; an uncaptured inline header can
+have a valid DWARF location without verified source text. In report-only mode,
+current source may be shown with an explicit unverified-source note; known hash
+mismatches must still be reported and their text omitted. Repeating the helper
+with unchanged inputs must produce identical base Markdown.
 
 After the helper finishes, **explain what happened** in the report. Use its
-`addr2line` results (or call that tool again with the captured ELF) to locate the
+`addr2line` results (or call that tool again with the selected ELF) to locate the
 actual functions, then read the surrounding source, relevant callers and symbol
 or constant definitions. Check available source hashes against the capture.
 Add a compact context excerpt when needed to explain the resolved store, retaining
@@ -160,17 +210,17 @@ elapsed time. Explain subsequent stack checking from its actual code; claim an
 observed error-handler stop only when this run has corresponding debugger
 inspection. Mark missing evidence or unresolved entries explicitly. Do not
 rerun the helper after adding explanations, because it replaces the report;
-archive and open the explained report as the final artifact.
+open the explained report as the final artifact.
 
 Check that the report section count equals the CSV record count, and that the
-CSV hash is unchanged. The magic-watch DWT index must contain a PC resolving to
-the corruption store. An initialization write is expected and remains a separate
-entry; it is not evidence of corruption by itself. A missing corruption PC,
-decoder errors or unresolved corruption location prevents a successful end-to-end
-result. Do not treat cycle fields as elapsed time when timestamps are disabled.
+CSV hash is unchanged. Report-only mode retains unresolved/incomplete entries
+and explains their limitations; it does not start a capture to fill missing data.
+For a successful full capture test, the magic-watch DWT index must contain a PC
+resolving to the corruption store, without decoder errors. An initialization
+write remains a separate entry and is not evidence of corruption by itself.
+Do not treat cycle fields as elapsed time when timestamps are disabled.
 
-Copy the Markdown report beside the manifest; retain original RAW/CSV and ELF
-there. **Automatically open the newly generated report in VS Code before the
+**Automatically open the newly generated report in VS Code before the
 final response**, including reports that document unresolved entries. Use a
 workspace-targeted editor tool if available; otherwise use the installed VS Code
 CLI with both absolute paths:
@@ -182,11 +232,11 @@ code "$trace_workspace" "$trace_report"
 Passing the project folder lets VS Code select its existing workspace window.
 Respect its Markdown editor/preview association. Do not force a new/reused window
 or use `--wait`, which would block until the user closes the report. Open only the
-report generated and verified by this run, never a stale file after generation
+report generated and checked in this invocation, never a stale file after generation
 failed. If no GUI/editor is available (for example in CI), keep the report and
 state that it could not be opened; do not rerun the capture for this reason.
 
-Finish with the active target/set, capture/report result, resolved store location,
-and links to the report, original CSV and capture directory. Include material
-decoder/capture limitations. Do not restart debugging after reporting; a later
-capture replaces current files but the archived report remains available.
+Finish with the mode, identified target/set or ELF, report result, resolved store
+location when present, and links to the report and original CSV. Include material
+decoder/capture limitations. Do not restart debugging after reporting. Later captures replace
+the current files; this skill keeps no archive.

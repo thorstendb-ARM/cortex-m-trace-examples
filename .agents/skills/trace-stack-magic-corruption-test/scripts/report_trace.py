@@ -41,26 +41,25 @@ def relative_name(path, root):
     return Path(os.path.relpath(path, root)).as_posix()
 
 
-def read_manifest(path, root):
-    if path is None:
-        return {}, {}, set(), None
-    original = path.read_bytes()
-    manifest = json.loads(original)
-    if not isinstance(manifest, dict) or not isinstance(manifest.get("sources"), dict):
-        raise ValueError("Manifest requires a sources path/hash object")
-    if not isinstance(manifest.get("elf_sha256"), str) or not HASH.fullmatch(manifest["elf_sha256"]):
-        raise ValueError("Manifest requires a valid elf_sha256")
+def read_capture_state(value, root):
+    if value is None:
+        return {}, {}, set()
+    state = json.loads(value)
+    if not isinstance(state, dict) or not isinstance(state.get("sources"), dict):
+        raise ValueError("Capture state requires a sources path/hash object")
+    if not isinstance(state.get("elf_sha256"), str) or not HASH.fullmatch(state["elf_sha256"]):
+        raise ValueError("Capture state requires a valid elf_sha256")
     sources = {}
-    for name, digest in manifest["sources"].items():
+    for name, digest in state["sources"].items():
         if not isinstance(digest, str) or not HASH.fullmatch(digest):
-            raise ValueError(f"Invalid source SHA-256 in manifest: {name}")
+            raise ValueError(f"Invalid source SHA-256 in capture state: {name}")
         sources[local_path(name, root)] = digest.lower()
     protected = set(sources)
-    protected.update(local_path(name, root) for name in manifest.get("inputs", {}))
-    for key, value in manifest.items():
-        if isinstance(value, str) and (Path(value).is_absolute() or key in ("elf", "elf_original", "csv", "raw", "profile")):
+    protected.update(local_path(name, root) for name in state.get("inputs", {}))
+    for key, value in state.items():
+        if isinstance(value, str) and (Path(value).is_absolute() or key in ("elf", "csv", "raw", "profile")):
             protected.add(local_path(value, root))
-    return manifest, sources, protected, original
+    return state, sources, protected
 
 
 def check_output(output, protected):
@@ -120,20 +119,21 @@ def resolve_addresses(tool, elf, addresses):
     return blocks
 
 
-def source_details(location, root, hashes, cache, warnings):
+def source_details(location, root, hashes, cache, warnings, protected, allow_unverified=False):
     match = LOCATION.fullmatch(location)
     if not match or match[1] == "??" or match[2] in ("?", "0"):
         return None, None, "Source location unresolved."
     path = local_path(match[1], root)
+    protected.add(path)
     number = int(match[2])
     label = f"{relative_name(path, root)}:{number}"
     if path not in cache:
-        if path not in hashes:
-            cache[path] = (None, "Source hash unavailable in capture manifest; text omitted.")
+        if path not in hashes and not allow_unverified:
+            cache[path] = (None, "Source hash unavailable in capture state; text omitted.")
         else:
             try:
                 raw = path.read_bytes()
-                if sha256(raw) != hashes[path]:
+                if path in hashes and sha256(raw) != hashes[path]:
                     cache[path] = (None, "Source changed since capture; text omitted.")
                 else:
                     cache[path] = (raw.decode("utf-8").splitlines(), None)
@@ -169,25 +169,23 @@ def report(args):
     elf = args.elf.resolve()
     root = args.source_root.resolve()
     output = (args.output or args.csv.with_suffix(".md")).absolute()
-    manifest, hashes, protected, manifest_bytes = read_manifest(args.source_manifest, root)
+    state, hashes, protected = read_capture_state(args.capture_state, root)
     protected.update((csv_path, elf, args.addr2line.resolve()))
-    if args.source_manifest:
-        protected.add(args.source_manifest.resolve())
     check_output(output, protected)
 
-    manifest_elf = manifest.get("elf_sha256", "").lower() or None
-    expected = args.elf_sha256.lower() if args.elf_sha256 else manifest_elf
+    state_elf = state.get("elf_sha256", "").lower() or None
+    expected = args.elf_sha256.lower() if args.elf_sha256 else state_elf
     if expected is not None and not HASH.fullmatch(expected):
         raise ValueError("ELF SHA-256 must contain 64 hexadecimal characters")
-    if manifest_elf is not None and expected != manifest_elf:
-        raise ValueError("--elf-sha256 disagrees with capture manifest")
+    if state_elf is not None and expected != state_elf:
+        raise ValueError("--elf-sha256 disagrees with capture state")
     elf_hash = file_hash(elf)
     if expected is not None and elf_hash != expected:
         raise ValueError("ELF differs from capture SHA-256; report left unchanged")
     csv_bytes = csv_path.read_bytes()
     csv_hash = sha256(csv_bytes)
-    if manifest.get("csv_sha256") is not None and csv_hash != manifest["csv_sha256"]:
-        raise ValueError("CSV differs from capture SHA-256; use the archived original CSV")
+    if state.get("csv_sha256") is not None and csv_hash != state["csv_sha256"]:
+        raise ValueError("CSV differs from capture SHA-256; prepare a new capture")
     rows = list(csv.reader(io.StringIO(csv_bytes.decode("utf-8-sig"), newline=""), strict=True))
     if not rows or not rows[0]:
         raise ValueError("CSV has no header")
@@ -202,9 +200,23 @@ def report(args):
     resolved = resolve_addresses(args.addr2line, elf, addresses)
 
     parts = ["# Stack magic trace", f"CSV: {inline_code(relative_name(csv_path, root))}"]
-    if isinstance(manifest.get("target"), str):
-        parts.append(f"Target: {inline_code(manifest['target'])}")
+    if isinstance(state.get("target"), str):
+        parts.append(f"Target: {inline_code(state['target'])}")
+    if args.report_only:
+        if not state.get("csv_sha256"):
+            parts.append(
+                "**Capture provenance: unverified.** PCs are resolved with the selected ELF and "
+                "source text is read from current files. Their association with the original "
+                "capture has not been established. Any supplied hashes are still enforced."
+            )
+        else:
+            parts.append(
+                "**Report-only analysis.** Supplied capture hashes are enforced. Source text "
+                "without a capture-time hash is marked as current-file content; its association "
+                "with the original capture is unverified."
+            )
     cache, warnings, unresolved = {}, [], 0
+    unverified_sources = set()
     for index, (row, raw_pc, address) in enumerate(zip(records, raw_pcs, parsed), start=1):
         parts.append(f"## Entry {index}")
         located = False
@@ -217,14 +229,20 @@ def report(args):
             for frame_index, (function, location) in enumerate(frames):
                 if frame_index:
                     parts.append(f"**Inline caller {frame_index}** ({inline_code(function)})")
-                label, source, error = source_details(location, root, hashes, cache, warnings)
+                label, source, error = source_details(
+                    location, root, hashes, cache, warnings, protected, args.report_only)
                 located = located or label is not None
                 if source is not None:
-                    parts.append(fenced(source, "c"))
+                    path = local_path(LOCATION.fullmatch(location)[1], root)
+                    language = "asm" if path.suffix.casefold() in (".s", ".asm") else "c"
+                    parts.append(fenced(source, language))
                 else:
                     parts.append(f"Status: {error}")
                 if label is not None:
                     parts.append(f"Location: {inline_code(label)}")
+                if source is not None and path not in hashes:
+                    unverified_sources.add(relative_name(path, root))
+                    parts.append("Source provenance: current file; no capture-time source hash available.")
         if raw_pc and not located:
             unresolved += 1
         parts.extend(trace_fields(header, row, pc_index))
@@ -236,8 +254,6 @@ def report(args):
             raise ValueError("CSV changed during reporting; stop capture/conversion first")
         if file_hash(elf) != elf_hash:
             raise ValueError("ELF changed during reporting; report left unchanged")
-        if args.source_manifest and args.source_manifest.read_bytes() != manifest_bytes:
-            raise ValueError("Capture manifest changed during reporting; report left unchanged")
 
     recheck_inputs()
     changed = not output.exists() or output.read_bytes() != updated
@@ -261,7 +277,8 @@ def report(args):
         "pc_rows": sum(bool(raw) for raw in raw_pcs), "unique_pcs": len(addresses),
         "unresolved_rows": unresolved, "source_warnings": list(dict.fromkeys(warnings)),
         "report": str(output), "csv_sha256": csv_hash, "elf_sha256": elf_hash,
-        "changed": changed,
+        "changed": changed, "report_only": args.report_only,
+        "unverified_sources": sorted(unverified_sources),
     }, ensure_ascii=False, indent=2))
 
 
@@ -271,7 +288,10 @@ def main():
     parser.add_argument("--elf", type=Path, required=True)
     parser.add_argument("--addr2line", type=Path, required=True)
     parser.add_argument("--source-root", type=Path, required=True)
-    parser.add_argument("--source-manifest", type=Path)
+    parser.add_argument("--report-only", action="store_true",
+                        help="Read current source without capture state; mark missing capture provenance")
+    parser.add_argument("--capture-state",
+                        help="Capture-state JSON retained in memory after verification")
     parser.add_argument("--elf-sha256")
     parser.add_argument("--output", type=Path)
     try:
