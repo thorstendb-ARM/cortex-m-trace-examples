@@ -17,6 +17,10 @@ hardware results and capture limitations are in [Validation](VALIDATION.md).
 - Run separate sine and deterministic-noise threads at 100 ms and an ITM channel 1
   counter thread at 200 ms. Configure two DWT sources, PC sampling and timestamps
   through the Trace Generation view and `.ctrace.yml`.
+- Provide an L552-only `ULINKplus StackCorruption` target set with a fourth,
+  256-byte-stack thread that deliberately corrupts its RTX stack magic. Capture
+  the writing PC through a single DWT watch over SWO, with other trace sources
+  disabled.
 - Keep trace initialization in the debugger. Firmware writes the watched variables
   and makes nonblocking ITM writes; it does not enable or configure the trace path.
 - Use ULINK+ through pyOCD as the baseline. Provide ST-LINK profiles with a lower
@@ -30,15 +34,16 @@ hardware results and capture limitations are in [Validation](VALIDATION.md).
 - Prepare for open-source release: preserve source provenance and license notices;
   exclude build outputs, `.trace/` and machine-specific settings from Git.
 
-The agreed board order is MCBSTM32F400, NUCLEO-L552ZE-Q, NUCLEO-F756ZG,
-STM32F429I-DISCO, NUCLEO-F401RE, STM32H7B3I-DK, then STM32F4-DISCO (MB997 B-02).
+The board order is MCBSTM32F400, NUCLEO-L552ZE-Q, NUCLEO-F756ZG,
+STM32F429I-DISCO, NUCLEO-F401RE, STM32H7B3I-DK, STM32F4-DISCO (MB997 B-02),
+then NUCLEO-F446RE.
 
 ## Architecture and ownership
 
 | Element | Responsibility |
 | --- | --- |
-| `Trace.csolution.yml` | Device-based targets, Debug build, layer selection and debugger sets |
-| `Projects/TraceDemo/TraceDemo.cproject.yml` | One application image per selected board; shared sources and CMSIS/RTX components |
+| `Trace.csolution.yml` | Device-based targets, Debug and L552-only StackCorruption builds, layer selection and debugger sets |
+| `Projects/TraceDemo/TraceDemo.cproject.yml` | One application image per selected context; shared sources and CMSIS/RTX components |
 | `Board/<board>/Board.clayer.yml` | Device header/startup/system selection, board `main()`, target adaptation and linker regions |
 | `Common/App`, `Common/Workloads`, `Common/Trace` | RTX startup, periodic signal generation and nonblocking ITM output |
 | `Projects/TraceDemo/RTE/CMSIS` | Shared RTX5 component configuration |
@@ -61,6 +66,11 @@ Reset → device SystemInit / C runtime → board main()
       → target_init() → shared app_main() → RTX5 and the three signal threads
 ```
 
+The L552 `StackCorruption` context additionally creates its fault-injection thread.
+The normal `Debug` contexts exclude that source and thread. See the
+[stack-corruption workflow](TRACE_APP.md#stack-corruption-watch-nucleo-l552ze-q)
+for the injected store and watch-only trace profile.
+
 `target_init()` retains the vendor clock baseline and updates `SystemCoreClock`.
 RTX5/CMSIS OS Tick supply SVC, PendSV and SysTick handling. The Trace application
 is currently a CProject, not an application clayer. Explicit layer selection and
@@ -72,7 +82,7 @@ and would not generate the call to `app_main()`.
 1. Established one solution, one CProject and a `Debug` build with optimization
    disabled. Dependencies are pinned in the [Pack lock](../Trace.cbuild-pack.yml);
    tool versions and setup are in [BUILD.md](BUILD.md).
-2. Authored seven local board layers using standalone ST CMSIS startup, system and
+2. Authored eight local board layers using standalone ST CMSIS startup, system and
    header sources, keeping the build independent of CubeMX generator paths.
    Included source commit IDs and hashes in
    [ThirdParty/ST/sources.json](../ThirdParty/ST/sources.json).
