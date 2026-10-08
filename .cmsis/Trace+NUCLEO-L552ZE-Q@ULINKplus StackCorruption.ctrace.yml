@@ -9,9 +9,6 @@ ctrace:
           access: W
           size: 4
           output: PC
-        - location: g_trace_itm_counter
-          access: W
-          output: PC+value
       itm:
         enable: 0x00000000
       pcsampling:
