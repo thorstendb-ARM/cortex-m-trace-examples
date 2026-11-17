@@ -35,8 +35,11 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 | [STM32F4-DISCO](Board/STM32F4-DISCO/README.md), MB997 B-02 | Cortex-M4 | `ULINKplus`, `STLink` |
 | [EK-RA8P1](Board/EK-RA8P1/README.md) | Cortex-M85 CPU0, TrustZone build off | `ULINKplus` |
 
-EK-RA8P1 needs an explicit [CPU0 debug preparation](Board/EK-RA8P1/README.md#debug-and-trace-preparation)
-after build/refresh, using a repository skill or the documented shell command.
+EK-RA8P1: after build/refresh, run `Use $prepare-ra8p1-trace`
+([skill](.agents/skills/prepare-ra8p1-trace/SKILL.md)) or follow the
+[shell procedure](Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+This temporary RA_DFP 6.6.0 workaround uses CMake and bundled pyTS without a build
+hook or extra interpreter. SWO uses the standard automatic CSV workflow.
 
 Hardware results and open capture issues are listed in
 [Validation](docs/VALIDATION.md). This project currently implements SWO;
