@@ -2,14 +2,17 @@
 
 ## Environment and dependencies
 
-Use CMSIS-Toolbox 2.15.0, GNU Arm Toolchain 14.3.1, CMake 3.31.5 and Ninja 1.13.2.
-Arm Environment Manager and CI install these versions from
-[`vcpkg-configuration.json`](../vcpkg-configuration.json); the CMSIS Solution
-extension can also supply the toolbox for local builds.
+Arm Environment Manager and CI select the available build tools from
+[`vcpkg-configuration.json`](../vcpkg-configuration.json), which currently uses
+`*` version requirements. The earlier reference environment used CMSIS-Toolbox
+2.15.0, GNU Arm Toolchain 14.3.1, CMake 3.31.5 and Ninja 1.13.2. Actual validation
+versions are recorded in [Validation](VALIDATION.md). The CMSIS Solution extension
+can also supply the toolbox for local builds.
 
 For a manual installation, put those tools on `PATH`, set `CMSIS_COMPILER_ROOT`
-to the toolbox's `etc` directory and `GCC_TOOLCHAIN_14_3_1` to the compiler's `bin`
-directory. Check the environment from the repository root:
+to the toolbox's `etc` directory and the matching `GCC_TOOLCHAIN_<version>`
+variable to the compiler's `bin` directory (for example `GCC_TOOLCHAIN_14_3_1`).
+Check the environment from the repository root:
 
 ```sh
 cbuild --version
@@ -122,3 +125,18 @@ GNU newlib-nano/libnosys warns about unimplemented `_close`, `_lseek`, `_read`
 and `_write`. No STDIO transport is provided; the application makes no STDIO calls.
 
 See [Validation](VALIDATION.md) for hardware checks and results.
+
+## EK-RA8P1 trace setup
+
+Build `EK-RA8P1@ULINKplus` normally with the installed GCC toolchain. The
+`PrepareRA8P1Trace` post-build step automatically applies the CPU0-only run
+override and invokes the installed pyTS for the current ELF, including no-op
+builds. Ruby's standard YAML library and the CMSIS Debugger tools export are
+required for this target. Normal Load & Debug then works with file-based SWO
+and automatic RAW-to-CSV conversion on pause/end; no trace TCP server is used.
+
+After a standalone refresh, ordinary manual trace conversion or a `--context`
+build (which skips CMSIS `executes`), run
+`ruby Board/EK-RA8P1/prepare_trace.rb` explicitly. An optional argument selects
+pyTS when the tools export is unavailable. The [board README](../Board/EK-RA8P1/README.md)
+explains the DFP gaps, clock baseline and hardware prerequisites.

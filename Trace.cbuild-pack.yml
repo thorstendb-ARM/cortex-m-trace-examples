@@ -21,3 +21,6 @@ cbuild-pack:
     - resolved-pack: Keil::STM32L5xx_DFP@2.0.0
       selected-by-pack:
         - Keil::STM32L5xx_DFP@2.0.0
+    - resolved-pack: Renesas::RA_DFP@6.6.0
+      selected-by-pack:
+        - Renesas::RA_DFP@6.6.0

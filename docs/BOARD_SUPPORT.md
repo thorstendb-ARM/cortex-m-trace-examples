@@ -1,11 +1,11 @@
 # Board support and references
 
-All eight targets use local device-based layers in `Board/<Board>/Board.clayer.yml`.
+All ten targets use local device-based layers in `Board/<Board>/Board.clayer.yml`.
 The solution selects each through `Board-Layer`. Device names and pinned DFPs
 below match the local configuration. Confirm the physical PCB revision separately
 from the catalog board revision.
 
-| Local board layer | CMSIS device (`STMicroelectronics::`) | Core | Pinned DFP (`Keil::`) |
+| Local board layer | CMSIS device (ST unless qualified) | Core | Pinned DFP (Keil unless qualified) |
 | --- | --- | --- | --- |
 | [MCBSTM32F400](../Board/MCBSTM32F400/README.md) | `STM32F407IGHx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [NUCLEO-L552ZE-Q](../Board/NUCLEO-L552ZE-Q/README.md) | `STM32L552ZETxQ` | Cortex-M33 | `STM32L5xx_DFP@2.0.0` |
@@ -16,10 +16,11 @@ from the catalog board revision.
 | [NUCLEO-F446RE](../Board/NUCLEO-F446RE/README.md) | `STM32F446RETx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
 | [STM32H7B3I-DK](../Board/STM32H7B3I-DK/README.md) | `STM32H7B3LIHxQ` | Cortex-M7 | `STM32H7xx_DFP@4.1.3` |
 | [STM32F4-DISCO](../Board/STM32F4-DISCO/README.md) | `STM32F407VGTx` | Cortex-M4 | `STM32F4xx_DFP@3.0.0` |
+| [EK-RA8P1](../Board/EK-RA8P1/README.md) | `Renesas::R7KA8P1KF:CPU0` | Cortex-M85 | `Renesas::RA_DFP@6.6.0` |
 
 ## Shared layer design
 
-Each layer selects standalone ST CMSIS device headers, GCC startup assembly and
+STM32 layers select standalone ST CMSIS device headers, GCC startup assembly and
 system sources from [ThirdParty/ST](../ThirdParty/README.md), plus the shared GCC
 linker template. `regions.h` selects one internal Flash region, one SRAM region
 and a 4 KiB main stack. The board `main()` calls `target_init()` and the common
@@ -197,3 +198,17 @@ onboard-probe hardware; select documentation for the physical PCB revision.
 
 Use the [board README](../Board/STM32F4-DISCO/README.md) and
 [MB997 wiring notes](ST_BOARD_BRINGUP.md#stm32f4-disco--mb997-b-02).
+
+### EK-RA8P1
+
+The [RA8P1 layer](../Board/EK-RA8P1/README.md) uses the supplied RTOSDemo project's
+CMSIS-based CPU0 startup and core header, internal code MRAM/SRAM0 and the
+8 MHz MOCO reset clock. It shares the application, RTX configuration and GCC
+linker template. The Cortex-M33 CPU1 is not an application target.
+
+The original `Renesas::RA_DFP@6.6.0` remains unmodified. A documented local
+run-description override supplies missing CPU0/AP0 and SWO setup; a preparation
+script generates CPU0-only trace settings from the current ELF. The solution
+build runs it automatically; invoke it explicitly after a standalone refresh. No `.dbgconf` defaults exist for this device in that DFP.
+The board README records Debug In jumpers, separate power, security prerequisites,
+manual links and the remaining hardware checks.

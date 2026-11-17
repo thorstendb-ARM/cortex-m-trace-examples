@@ -6,8 +6,8 @@ bring-up project or a reference example, and is currently not intended as a
 starting point for customer projects.
 
  A common firmware baseline for testing trace across Cortex-M boards and debug
- probes. One **CMSIS solution** builds a shared **RTX5 application** through eight
-local board layers, covering Cortex-M4, Cortex-M7 and Cortex-M33.
+ probes. One **CMSIS solution** builds a shared **RTX5 application** through ten
+local board layers, covering Cortex-M4, Cortex-M7, Cortex-M33 and Cortex-M85.
 
 The workload updates sine and deterministic-noise variables every 100 ms for DWT
 and emits an ITM channel 1 counter every 200 ms. Debugger profiles add PC sampling
@@ -33,6 +33,9 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 | [NUCLEO-F446RE](Board/NUCLEO-F446RE/README.md) | Cortex-M4 | `STLink` |
 | [STM32H7B3I-DK](Board/STM32H7B3I-DK/README.md) | Cortex-M7 | `ULINKplus` |
 | [STM32F4-DISCO](Board/STM32F4-DISCO/README.md), MB997 B-02 | Cortex-M4 | `ULINKplus`, `STLink` |
+| [EK-RA8P1](Board/EK-RA8P1/README.md) | Cortex-M85 CPU0, TrustZone build off | `ULINKplus` |
+
+EK-RA8P1 applies its [CPU0 trace preparation](Board/EK-RA8P1/README.md#debug-and-trace-preparation) automatically during a solution build.
 
 Hardware results and open capture issues are listed in
 [Validation](docs/VALIDATION.md). This project currently implements SWO;
@@ -97,8 +100,8 @@ If your agent does not discover repository skills, ask it to read the linked
 | File or directory | Purpose |
 | --- | --- |
 | `Trace.csolution.yml`, `Projects/TraceDemo/TraceDemo.cproject.yml` | Targets, debugger sets, common application and RTX5 components |
-| `Common/`, `Board/` | Shared application and eight local board layers |
-| `.cmsis/`, `Trace.cbuild-pack.yml`, `vcpkg-configuration.json` | Trace/debug profiles and pinned dependencies |
+| `Common/`, `Board/` | Shared application and ten local board layers |
+| `.cmsis/`, `Trace.cbuild-pack.yml`, `vcpkg-configuration.json` | Trace/debug profiles, Pack locks and tool requirements |
 | [DESIGN.md](docs/DESIGN.md) | Agreed requirements, architecture and how the baseline was assembled |
 | [BUILD.md](docs/BUILD.md), [DEBUG_PROBES.md](docs/DEBUG_PROBES.md) | Tool setup, builds and switching probes |
 | [TRACE_APP.md](docs/TRACE_APP.md) | Signal definitions, capture/CSV workflow and host-tool scope |

@@ -6,7 +6,7 @@ hardware results and capture limitations are in [Validation](VALIDATION.md).
 
 ## Agreed requirements
 
-- Reuse one compact application across Cortex-M4, Cortex-M7 and Cortex-M33 boards.
+- Reuse one compact application across Cortex-M4, Cortex-M7, Cortex-M33 and Cortex-M85 boards.
   Keep device startup, memory layout and hardware adaptation in local board layers.
 - Use CMSIS csolution/cproject/clayer, CMSIS-Core and RTX5. Use device Packs for
   device descriptions, SVDs, Flash algorithms and debug/trace sequences.
@@ -29,14 +29,14 @@ hardware results and capture limitations are in [Validation](VALIDATION.md).
 - Capture SWO through pyOCD and convert RAW to CSV automatically on debug pause
   or session end in VS Code. Add trace-buffer (TB) scenarios after the required
   target paths and pyOCD functionality are established; TB is not implemented here.
-- Use internal Flash/SRAM and the vendor reset-clock baseline. L552 uses one image
+- Use internal Flash or MRAM, SRAM and the vendor reset-clock baseline. L552 uses one image
   with TrustZone disabled; option-byte provisioning is outside this project.
 - Prepare for open-source release: preserve source provenance and license notices;
   exclude build outputs, `.trace/` and machine-specific settings from Git.
 
 The board order is MCBSTM32F400, NUCLEO-L552ZE-Q, NUCLEO-F756ZG,
 STM32F429I-DISCO, NUCLEO-F401RE, STM32H7B3I-DK, STM32F4-DISCO (MB997 B-02),
-then NUCLEO-F446RE.
+then NUCLEO-F446RE, NUCLEO-G474RE and EK-RA8P1.
 
 ## Architecture and ownership
 
@@ -47,7 +47,7 @@ then NUCLEO-F446RE.
 | `Board/<board>/Board.clayer.yml` | Device header/startup/system selection, board `main()`, target adaptation and linker regions |
 | `Common/App`, `Common/Workloads`, `Common/Trace` | RTX startup, periodic signal generation and nonblocking ITM output |
 | `Projects/TraceDemo/RTE/CMSIS` | Shared RTX5 component configuration |
-| `ThirdParty/ST`, `Board/Support` | Pinned ST CMSIS sources and shared linker template |
+| `ThirdParty/ST`, `ThirdParty/Renesas`, `Board/Support` | Pinned CMSIS device sources and shared linker template |
 | `.cmsis/*.ctrace.yml` | Editable, symbol-based trace sources; pyTS resolves them against the built ELF |
 | `.cmsis/*.dbgconf` | Pack debug/trace variable configuration |
 | `out/*.cbuild-run.yml`, `.trace/` | Generated debug/trace runtime files and RAW/CSV captures; excluded from Git |
@@ -95,6 +95,12 @@ and would not generate the call to `app_main()`.
    [trace setup](TRACE_APP.md#configuration-ownership).
 5. Separated probe selection and trace traffic settings from the firmware build
    through [debugger target sets](DEBUG_PROBES.md).
+
+EK-RA8P1 reuses the supplied Renesas RTOSDemo project's CMSIS-based CPU0
+startup/header, while retaining this project's 8 MHz reset-clock baseline. Its
+DFP lacks CPU0/AP0 and SWO setup; the versioned board override and preparation
+script apply the existing run-description override workflow without changing
+installed Packs. See the [board layer](../Board/EK-RA8P1/README.md).
 
 The [board inventory](BOARD_SUPPORT.md) records exact devices and Pack choices;
 [ThirdParty/README.md](../ThirdParty/README.md) records the imported source subset.

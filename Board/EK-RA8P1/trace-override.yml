@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: Apache-2.0
+# CPU0-only SWO adaptation of Renesas_EK-RA8P1's legacy-ra8p1-swo-device.xml.
+# RA8P1 hardware manual Rev. 1.30, pp. 144-145, 375-376, 524-526.
+# Keep legacy pyOCD ITM/TPIU setup; trace-setup: full would bypass it.
+debug-topology:
+  debugports:
+    - dpid: 0
+      accessports:
+        - apid: 0
+          index: 0
+  processors:
+    - pname: CPU0
+      apid: 0
+  trace-sinks:
+    - serialwire:
+debug-sequences:
+  - name: SetupRA8P1SWO
+    blocks:
+      - execute: |
+          __var saved_ap = __ap;
+          __ap = 0;
+          Write32(0x4001B030, 0x00000009); // TRPORTCR: CPU0 SWO on P209.
+          __var trace_clock = Read8(0x4001E03F);
+      - if: trace_clock != 0x83
+        blocks:
+          - execute: |
+              __var saved_prcr = Read16(0x4001E3FA) & 0x000F;
+              Write16(0x4001E3FA, 0xA501 | saved_prcr);
+          - if: (trace_clock & 0x80) != 0
+            execute: |
+              Write8(0x4001E03F, trace_clock & 0x7F);
+          - execute: |
+              Write8(0x4001E03F, 0x03); // TRCK=/8 while stopped.
+              Write8(0x4001E03F, 0x83); // 8 MHz MOCO /8 = 1 MHz trace input.
+              Write16(0x4001E3FA, 0xA500 | saved_prcr);
+      - execute: |
+          __ap = saved_ap;
+  - name: DebugDeviceUnlock
+    blocks:
+      - if: (__traceout & 1) != 0
+        execute: |
+          // Enable the clock before CoreSight discovers the CPU0 TPIU.
+          Sequence("SetupRA8P1SWO");
+  - name: TraceStart
+    blocks:
+      - if: (__traceout & 1) != 0
+        execute: |
+          // Restore routing after reset, before generic ITM/TPIU setup.
+          Sequence("SetupRA8P1SWO");

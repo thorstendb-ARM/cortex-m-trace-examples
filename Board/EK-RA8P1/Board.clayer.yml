@@ -1,0 +1,28 @@
+layer:
+  type: Board
+  description: EK-RA8P1 CPU0 with internal MRAM/SRAM0 and the 8 MHz MOCO reset clock
+  for-device: Renesas::R7KA8P1KF:CPU0
+
+  packs:
+    - pack: Renesas::RA_DFP@6.6.0
+
+  define:
+    - CMSIS_device_header: '"ra8p1.h"'
+
+  add-path:
+    - ../../ThirdParty/Renesas/ek-ra8p1
+
+  groups:
+    - group: Board
+      files:
+        - file: main.c
+        - file: target.c
+    - group: CMSIS Device
+      files:
+        - file: ../../ThirdParty/Renesas/ek-ra8p1/startup_ra8p1.c
+        - file: ../../ThirdParty/Renesas/ek-ra8p1/system_ra8p1.c
+
+  linker:
+    - script: ../Support/gcc_linker_script.ld.src
+      regions: regions.h
+      for-compiler: GCC

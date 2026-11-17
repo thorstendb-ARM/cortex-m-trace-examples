@@ -37,6 +37,15 @@ project:
         - file: ../../Common/Trace/itm_output.c
         - file: ../../Common/Include/trace.h
 
+  executes:
+    - execute: PrepareRA8P1Trace
+      for-context: .Debug+EK-RA8P1
+      run: ruby "$input(1)$"
+      always:
+      input:
+        - $elf()$
+        - $SolutionDir()$/Board/EK-RA8P1/prepare_trace.rb
+
   layers:
     - layer: $Board-Layer$
       type: Board

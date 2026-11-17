@@ -31,3 +31,21 @@ symbols used by ST GNU startup. That startup initializes only the primary
 CMSIS-Core and RTX5 are consumed from packs. CMSIS tools copy application
 configuration and DFP debugger defaults into `RTE/` and `.cmsis/`; their original
 notices remain intact.
+
+## Renesas EK-RA8P1 core support
+
+[Renesas/sources.json](Renesas/sources.json) records the startup, system source
+and core headers imported from the supplied `Renesas_EK-RA8P1` project, with the
+source revision, original byte hashes and retained-file hashes. They adapt
+`ARM::Cortex_DFP@1.1.0` Cortex-M85 templates and retain their Apache-2.0 notices.
+The local system header removes the reference project's 1-GHz clock API; that
+clock implementation and its FSP dependency are not imported. Board clock
+recognition is project code in `Board/EK-RA8P1/target.c`.
+
+The CMSIS C startup places `.vectors` at MRAM origin using the shared linker
+script, initializes data through the CMSIS copy table and lets newlib initialize
+BSS. The DFP's FSP-generated startup is not selected. Renesas::RA_DFP@6.6.0
+supplies device metadata, SVD and programming algorithms from the installed pack;
+its contents are unchanged. The board-local trace override adapts the supplied
+project's historical CPU0 SWO sequence, with the reset-clock frequency and
+explicit AP preservation. See the [board documentation](../Board/EK-RA8P1/README.md).

@@ -30,6 +30,7 @@ jobs:
           - TraceDemo.Debug+STM32F4-DISCO
           - TraceDemo.Debug+STM32F429I-DISCO
           - TraceDemo.Debug+STM32H7B3I-DK
+          - TraceDemo.Debug+EK-RA8P1
 
     steps:
       - name: Checkout
