@@ -30,6 +30,7 @@ jobs:
           - TraceDemo.Debug+STM32F4-DISCO
           - TraceDemo.Debug+STM32F429I-DISCO
           - TraceDemo.Debug+STM32H7B3I-DK
+          - TraceDemo.Debug+EK-RA8P1
 
     steps:
       - name: Checkout
@@ -54,3 +55,9 @@ jobs:
           --packs
           --frozen-packs
           --update-rte
+
+      - name: Check explicit RA8P1 debug preparation
+        if: matrix.context == 'TraceDemo.Debug+EK-RA8P1'
+        run: |
+          cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
+          cmp Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml

@@ -1,7 +1,7 @@
 # Build inputs; cbuild generates *.cbuild*.yml and the debugger run description.
 solution:
   created-for: CMSIS-Toolbox@2.15.0
-  compiler: GCC@14.3.1
+  compiler: GCC
   cdefault:
 
   packs:
@@ -47,7 +47,7 @@ solution:
           images:
             - project-context: TraceDemo.Debug
           debugger:
-            name: ULINKplus@pyOCD
+            name: ULINKpro@pyOCD
             protocol: swd
             clock: 10000000
             trace:
@@ -266,6 +266,31 @@ solution:
               - swo-uart:
                 mode: file
                 input-clock: 16000000
+                output-clock: 1000000
+
+    - type: EK-RA8P1
+      device: Renesas::R7KA8P1KF:CPU0
+      processor:
+        trustzone: off
+        fpu: off
+        mve: off
+        branch-protection: off
+      variables:
+        - Board-Layer: $SolutionDir()$/Board/EK-RA8P1/Board.clayer.yml
+      target-set:
+        - set: ULINKplus
+          images:
+            - project-context: TraceDemo.Debug
+          debugger:
+            name: ULINKplus@pyOCD
+            protocol: swd
+            clock: 10000000
+            gdbserver:
+              - port: 3333
+            trace:
+              - swo-uart:
+                mode: file
+                input-clock: 1000000
                 output-clock: 1000000
 
   projects:

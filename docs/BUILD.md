@@ -2,14 +2,17 @@
 
 ## Environment and dependencies
 
-Use CMSIS-Toolbox 2.15.0, GNU Arm Toolchain 14.3.1, CMake 3.31.5 and Ninja 1.13.2.
-Arm Environment Manager and CI install these versions from
-[`vcpkg-configuration.json`](../vcpkg-configuration.json); the CMSIS Solution
-extension can also supply the toolbox for local builds.
+Arm Environment Manager and CI select the available build tools from
+[`vcpkg-configuration.json`](../vcpkg-configuration.json), which currently uses
+`*` version requirements. The earlier reference environment used CMSIS-Toolbox
+2.15.0, GNU Arm Toolchain 14.3.1, CMake 3.31.5 and Ninja 1.13.2. Actual validation
+versions are recorded in [Validation](VALIDATION.md). The CMSIS Solution extension
+can also supply the toolbox for local builds.
 
 For a manual installation, put those tools on `PATH`, set `CMSIS_COMPILER_ROOT`
-to the toolbox's `etc` directory and `GCC_TOOLCHAIN_14_3_1` to the compiler's `bin`
-directory. Check the environment from the repository root:
+to the toolbox's `etc` directory and the matching `GCC_TOOLCHAIN_<version>`
+variable to the compiler's `bin` directory (for example `GCC_TOOLCHAIN_14_3_1`).
+Check the environment from the repository root:
 
 ```sh
 cbuild --version
@@ -122,3 +125,25 @@ GNU newlib-nano/libnosys warns about unimplemented `_close`, `_lseek`, `_read`
 and `_write`. No STDIO transport is provided; the application makes no STDIO calls.
 
 See [Validation](VALIDATION.md) for hardware checks and results.
+
+## EK-RA8P1 trace setup
+
+Build `EK-RA8P1@ULINKplus` with the installed GCC toolchain using the IDE solution
+build or `cbuild --active EK-RA8P1@ULINKplus Trace.csolution.yml`. The firmware
+build has no custom preparation step. After the final build/refresh, invoke
+`Use $prepare-ra8p1-trace` with the
+[repository skill](../.agents/skills/prepare-ra8p1-trace/SKILL.md), or copy the
+versioned CPU0-only debug description explicitly:
+
+```sh
+cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
+```
+
+Generate the trace runtime from the current ELF with the normal Trace Generation
+view or bundled pyTS, then use Load & Debug. Repeat preparation after a subsequent
+build/refresh or target change. SWO is captured to a file and converted automatically
+to CSV on pause/end. This needs no additional interpreter or CMSIS tools export.
+
+The [board README](../Board/EK-RA8P1/README.md) explains the temporary DFP 6.6.0
+workaround, clock baseline and hardware prerequisites. CI builds the firmware and
+checks the explicit CMake copy separately; it does not require an AI agent.

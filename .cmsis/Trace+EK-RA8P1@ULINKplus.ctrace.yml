@@ -1,0 +1,25 @@
+---
+ctrace:
+  setup:
+  - pname: CPU0
+    core: Cortex-M85
+    timestamps:
+      clock: 8000000
+      itm-prescaler: 1
+    data:
+    - location: g_trace_sine
+      label: Sine
+      access: W
+      size: 4
+      output: value
+    - location: g_trace_noise
+      label: Noise
+      access: W
+      size: 4
+      output: value
+    itm:
+      enable: 2
+    pcsampling:
+      period: 8192
+    synchronization:
+      DWT: 16M

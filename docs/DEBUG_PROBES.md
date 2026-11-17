@@ -32,6 +32,10 @@ type are connected, select the intended probe before loading an image.
 | NUCLEO-F446RE | `STLink` | 16 MHz |
 | STM32H7B3I-DK | `ULINKplus` (unnamed set) | 64 MHz |
 | STM32F4-DISCO (MB997 B-02) | `ULINKplus`, `STLink` | 16 MHz |
+| EK-RA8P1 | `ULINKplus` | 8 MHz CPU0/timestamps; 1 MHz trace input |
+
+The L552 target set is still named `ULINKplus`; its debugger selection currently
+uses `ULINKpro@pyOCD`.
 
 For the two unnamed sets, select `--active MCBSTM32F400` or
 `--active STM32H7B3I-DK`, without an `@ULINKplus` suffix. The other boards
@@ -63,3 +67,17 @@ cbuild Trace.csolution.yml --active 'NUCLEO-F756ZG@STLink' --packs --frozen-pack
 The generated `.cbuild-run.yml` represents the active set and is replaced when
 switching. Source and generated trace profiles include `@<set>` for named sets;
 see the [file naming table](TRACE_APP.md#configuration-ownership).
+
+## EK-RA8P1 CPU0 debug description
+
+Use `EK-RA8P1@ULINKplus`, 10 MHz SWD, GDB port 3333 and 1 Mbaud SWO.
+After the final build/refresh, apply the versioned CPU0/AP0 description with the
+[preparation skill](../.agents/skills/prepare-ra8p1-trace/SKILL.md) or the explicit
+CMake command in the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+Generate trace through the normal Trace Generation view or bundled pyTS before
+Enter Debug. SWO uses file capture with automatic RAW-to-CSV conversion on
+pause/end and no live trace TCP service.
+
+Repeat preparation after a later build, refresh or target change.
+Load/debug, RTX and automatic CSV on pause passed with the same CPU0 settings;
+capture-boundary errors remain in [Validation](VALIDATION.md#ek-ra8p1-cpu0--2026-11-17).

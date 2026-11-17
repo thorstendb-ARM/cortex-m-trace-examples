@@ -1,0 +1,35 @@
+{
+  "source_project": "Renesas_EK-RA8P1",
+  "source_revision": "3d94574ee1e95704ebca3d6ba173e0360b92872a",
+  "note": "Imported working-tree bytes are identified by source_sha256; the source project may contain uncommitted changes. CMSIS files adapt ARM::Cortex_DFP@1.1.0. The local system header removes the reference project clock-configuration API; the board uses the 8 MHz MOCO reset clock.",
+  "files": [
+    {
+      "source_path": "src/startup_ra8p1.c",
+      "path": "ek-ra8p1/startup_ra8p1.c",
+      "sha256": "13a51131dc0480bac4c5e09e487008bb0e86afeaa43bf46ea7bc624cfec94051",
+      "size": 3008,
+      "source_sha256": "13a51131dc0480bac4c5e09e487008bb0e86afeaa43bf46ea7bc624cfec94051"
+    },
+    {
+      "source_path": "src/system_ra8p1.c",
+      "path": "ek-ra8p1/system_ra8p1.c",
+      "sha256": "6f1b578f94faf0f6b575e1a80b433164b4cc96c47eb7dfc8dd131e743e25225d",
+      "size": 1221,
+      "source_sha256": "6f1b578f94faf0f6b575e1a80b433164b4cc96c47eb7dfc8dd131e743e25225d"
+    },
+    {
+      "source_path": "board/ek-ra8p1/ra8p1.h",
+      "path": "ek-ra8p1/ra8p1.h",
+      "sha256": "7a07ab94dcecdabbf4450455c978bb4ec53e1c34f6221a1633fe3cd09013ee2c",
+      "size": 2057,
+      "source_sha256": "7a07ab94dcecdabbf4450455c978bb4ec53e1c34f6221a1633fe3cd09013ee2c"
+    },
+    {
+      "source_path": "board/ek-ra8p1/system_ra8p1.h",
+      "path": "ek-ra8p1/system_ra8p1.h",
+      "sha256": "541e2c409597ff41644fe399a5a96bbdd0f6ac880c8af5d99c1ce837ed436d30",
+      "size": 1009,
+      "source_sha256": "db81d5c3259db1e79b57917f92a5a20a8869b5bf0e2c407af2a4cb252c15145d"
+    }
+  ]
+}

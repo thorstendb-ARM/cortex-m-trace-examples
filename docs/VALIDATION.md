@@ -29,6 +29,7 @@ This table covers the regular demo; the StackCorruption experiment has its own s
 | NUCLEO-F446RE | — | PASS | IDE test pending; command-line server shutdown reported an SWV-reader assertion after the valid capture was flushed |
 | STM32H7B3I-DK | FAIL | — | ULINK+: incomplete/malformed packets at pause/end |
 | STM32F4-DISCO (MB997 B-02) | PASS | PASS | ULINK+: unexpected ITM26 records at pause/resume boundaries; incomplete pause/end packets. ST-LINK: pause passes, end incomplete |
+| EK-RA8P1 | OPEN | — | Load/debug, RTX and automatic CSV on pause passed 2026-11-17; startup/EOF packet errors |
 
 Controlled ULINK+ findings:
 
@@ -222,3 +223,70 @@ checks above.
   execution, SWO and automatic pause/end CSV conversion.
 - [ ] Confirm physical board revisions and unresolved connector/variant details
   listed in the [board references](BOARD_SUPPORT.md).
+
+## EK-RA8P1 CPU0 — 2026-11-17
+
+**Build, Load & Debug, RTX runtime and automatic CSV on pause: PASS. Capture integrity: OPEN.**
+`TraceDemo.Debug+EK-RA8P1`, set `ULINKplus`, built through CMSIS Solution using
+CMSIS-Toolbox `2.15.0-41-gb69523a` (cbuild `2.15.0-20-g82c1ed2`, csolution
+`2.15.1+p60-g84b22690`), GCC `15.3.2`, CMake `3.29.6` and Ninja `1.13.2`.
+Dependencies are the unchanged Renesas RA_DFP 6.6.0, CMSIS 6.3.0 and RTX 5.9.0.
+The selected tools differ from the historical reference versions in BUILD.md.
+
+The image links one CMSIS C vector table/reset handler and the shared RTX5
+application in internal MRAM/SRAM0. The 448-byte `__Vectors` table starts at
+`0x02000000`; `main` and the RTX SVC handler are linked. ELF totals are about
+15,020 bytes ROM and 38,512 bytes RAM including the main stack, within the
+layer's 1 MiB MRAM and 512 KiB SRAM0. It retains the 8 MHz MOCO reset clock,
+a 4 KiB main stack and the common RTX pool. No existing application source,
+RTX configuration, shared linker script or installed pack was changed.
+
+The initial preparation generated a CPU0/AP0 SWO description and ran installed
+pyTS `1.0.1.dev2+ga70bcd1`. Both watched symbols resolved from the current ELF as
+signed 32-bit values. The runtime retained the two DWT write sources, ITM1,
+8192-cycle PC sampling, 8 MHz timestamps and 16M DWT sync. The run/runtime
+descriptions contain no CPU1 register operations. SWO input/output clocks are
+both 1 MHz (MOCO /8, 1 Mbaud).
+
+The initial Enter Debug attempt failed before attaching: the ordinary build
+replaced the prepared run description, removing CPU0/AP0 mapping. The adapter
+also generated an empty GDB port without a default port entry. The target now
+has a default GDB port and a versioned, CPU0-only `debug-run.yml` description
+with literal-block sequence code. Apply it after build/refresh using the
+preparation skill or explicit CMake command in the board procedure.
+Trace generation uses the normal view or bundled pyTS.
+The description retains the debug topology and sequences used in the hardware
+checks below; no YAML serializer or additional interpreter is required.
+
+A subsequent normal `cmsis_action load_and_debug` completed CMSIS Load with exit
+0 and reached the board's `main()`. RTX ran the Sine100ms, Noise100ms and
+ITM1_200ms threads plus idle/timer. Live inspection reported APP_RUNNING,
+`SystemCoreClock = g_app_core_clock_hz = 8000000`, ITM counter 465 and zero
+ITM drops. The unrelated thOS debug session was left unchanged.
+
+SWO used `mode: file` with no trace TCP server. Pausing automatically created
+a fresh CSV: 90,735 PC samples, 1,866 DWT records across the two watches and
+465 ITM1 records. There were two decoder errors: `Invalid ITM packet sequence`
+near startup and `Incomplete ITM packet at EOF` at the pause boundary; no overflow
+record was present. Automatic CSV creation is verified, but this capture is not
+an integrity PASS. The target was resumed after inspection.
+
+CPU1/AP2 discovery still reports WAIT ACK, as in the supplied reference project;
+CPU0 loading/debugging succeeded. One intermediate direct flash attempt completed
+programming but reported an I/O error on exit; the subsequent normal CMSIS
+Load & Debug completed successfully. Repeated launch/reset and debug-end capture
+integrity remain to be checked. The reference project's 1-GHz ITM0 results do not
+apply to this reset-clock image.
+
+**Skill/shell preparation — 2026-11-17:** a fresh source snapshot in a path
+containing spaces passed the normal `cbuild --active EK-RA8P1@ULINKplus` build
+without a custom build hook, `.cmsis/tools-environment.yml` or Ruby (a shim rejects
+Ruby invocations). The build retained its ordinary generated run description.
+The explicit CMake command then copied the versioned template byte for byte;
+standard pyTS generated all six CPU0 trace references without missing symbols.
+Trace register operations match the previously validated runtime, and the
+template's CPU0 topology/sequences are unchanged. YAML, skill frontmatter,
+local documentation links and diff checks passed. The common CProject now
+matches `main`. The current debug session could not read the core and its server
+previously reported `No such device`; no new hardware capture is claimed for
+this preparation change.
