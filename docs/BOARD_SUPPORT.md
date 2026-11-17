@@ -208,8 +208,8 @@ linker template. The Cortex-M33 CPU1 is not an application target.
 
 The original `Renesas::RA_DFP@6.6.0` remains unmodified. A documented local
 CPU0-only debug description supplies the missing CPU0/AP0 and SWO setup. The
-solution build copies it with CMake; standard pyTS generates trace settings from
-the current ELF. Restore the description after a standalone refresh. No `.dbgconf`
+explicit preparation skill or documented CMake command copies it after build/refresh;
+standard pyTS generates trace settings from the current ELF. No `.dbgconf`
 defaults exist for this device in that DFP.
 The board README records Debug In jumpers, separate power, security prerequisites,
 manual links and the remaining hardware checks.

@@ -99,8 +99,9 @@ and would not generate the call to `app_main()`.
 EK-RA8P1 reuses the supplied Renesas RTOSDemo project's CMSIS-based CPU0
 startup/header, while retaining this project's 8 MHz reset-clock baseline. Its
 DFP lacks CPU0/AP0 and SWO setup; the versioned CPU0 debug description and a
-CMake copy step apply the run-description override workflow without changing
-installed Packs or adding an interpreter dependency. See the [board layer](../Board/EK-RA8P1/README.md).
+preparation skill with an explicit CMake command apply the run-description
+override workflow without changing installed Packs or adding an interpreter
+dependency. See the [board layer](../Board/EK-RA8P1/README.md).
 
 The [board inventory](BOARD_SUPPORT.md) records exact devices and Pack choices;
 [ThirdParty/README.md](../ThirdParty/README.md) records the imported source subset.

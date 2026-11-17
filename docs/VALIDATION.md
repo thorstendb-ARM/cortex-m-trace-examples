@@ -252,8 +252,9 @@ The initial Enter Debug attempt failed before attaching: the ordinary build
 replaced the prepared run description, removing CPU0/AP0 mapping. The adapter
 also generated an empty GDB port without a default port entry. The target now
 has a default GDB port and a versioned, CPU0-only `debug-run.yml` description
-with literal-block sequence code. A target-specific, always-run CMake copy step
-installs it after linking. Trace generation uses the normal view or bundled pyTS.
+with literal-block sequence code. Apply it after build/refresh using the
+preparation skill or explicit CMake command in the board procedure.
+Trace generation uses the normal view or bundled pyTS.
 The description retains the debug topology and sequences used in the hardware
 checks below; no YAML serializer or additional interpreter is required.
 
@@ -277,12 +278,15 @@ Load & Debug completed successfully. Repeated launch/reset and debug-end capture
 integrity remain to be checked. The reference project's 1-GHz ITM0 results do not
 apply to this reset-clock image.
 
-**Interpreter-free preparation — 2026-11-17:** the normal CMSIS solution build
-passed with the CMake copy step. The copied run description matches the versioned
-template, and its CPU0 topology/sequences match the earlier hardware-tested
-configuration. A fresh source snapshot in a path containing spaces passed the
-`--target all` solution build without `.cmsis/tools-environment.yml` and with
-an interpreter shim that rejects any Ruby invocation. The copied run description
-matched the template byte for byte. Standard pyTS generated all six CPU0 trace
-references; trace register operations matched the existing runtime. The current debug session could not read the core, and its server log reported
-`No such device`; no new hardware capture is claimed for this preparation change.
+**Skill/shell preparation — 2026-11-17:** a fresh source snapshot in a path
+containing spaces passed the normal `cbuild --active EK-RA8P1@ULINKplus` build
+without a custom build hook, `.cmsis/tools-environment.yml` or Ruby (a shim rejects
+Ruby invocations). The build retained its ordinary generated run description.
+The explicit CMake command then copied the versioned template byte for byte;
+standard pyTS generated all six CPU0 trace references without missing symbols.
+Trace register operations match the previously validated runtime, and the
+template's CPU0 topology/sequences are unchanged. YAML, skill frontmatter,
+local documentation links and diff checks passed. The common CProject now
+matches `main`. The current debug session could not read the core and its server
+previously reported `No such device`; no new hardware capture is claimed for
+this preparation change.

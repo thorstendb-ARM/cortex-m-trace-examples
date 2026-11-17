@@ -71,12 +71,13 @@ see the [file naming table](TRACE_APP.md#configuration-ownership).
 ## EK-RA8P1 CPU0 debug description
 
 Use `EK-RA8P1@ULINKplus`, 10 MHz SWD, GDB port 3333 and 1 Mbaud SWO.
-The target-specific `CopyRA8P1DebugDescription` solution-build step copies the
-versioned CPU0/AP0 description using CMake. Generate trace through the normal
-Trace Generation view or bundled pyTS before Enter Debug. SWO uses file capture
-with automatic RAW-to-CSV conversion on pause/end and no live trace TCP service.
-
-After a standalone refresh or `--context` build, restore the description with the
+After the final build/refresh, apply the versioned CPU0/AP0 description with the
+[preparation skill](../.agents/skills/prepare-ra8p1-trace/SKILL.md) or the explicit
 CMake command in the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+Generate trace through the normal Trace Generation view or bundled pyTS before
+Enter Debug. SWO uses file capture with automatic RAW-to-CSV conversion on
+pause/end and no live trace TCP service.
+
+Repeat preparation after a later build, refresh or target change.
 Load/debug, RTX and automatic CSV on pause passed with the same CPU0 settings;
 capture-boundary errors remain in [Validation](VALIDATION.md#ek-ra8p1-cpu0--2026-11-17).

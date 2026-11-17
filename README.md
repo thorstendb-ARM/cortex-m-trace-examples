@@ -35,7 +35,8 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 | [STM32F4-DISCO](Board/STM32F4-DISCO/README.md), MB997 B-02 | Cortex-M4 | `ULINKplus`, `STLink` |
 | [EK-RA8P1](Board/EK-RA8P1/README.md) | Cortex-M85 CPU0, TrustZone build off | `ULINKplus` |
 
-EK-RA8P1 copies its temporary [CPU0 debug description](Board/EK-RA8P1/README.md#debug-and-trace-preparation) during a solution build; trace generation uses the normal tools.
+EK-RA8P1 needs an explicit [CPU0 debug preparation](Board/EK-RA8P1/README.md#debug-and-trace-preparation)
+after build/refresh, using a repository skill or the documented shell command.
 
 Hardware results and open capture issues are listed in
 [Validation](docs/VALIDATION.md). This project currently implements SWO;
@@ -58,7 +59,10 @@ Missing CMSIS packs are installed by `cbuild --packs` using the pinned dependenc
    L552-only `ULINKplus StackCorruption`). Sets use automatic probe selection;
    select the intended probe locally when several are connected. Check the
    board README linked above and the [ST board wiring notes](docs/ST_BOARD_BRINGUP.md).
-3. Build the selected target. Enable `vscode-cmsis-debugger.enableTraceGenerationView`
+3. Build the selected target. For EK-RA8P1, apply its [debug description](Board/EK-RA8P1/README.md#debug-and-trace-preparation)
+   after the build, or invoke `Use $prepare-ra8p1-trace` to prepare it and generate
+   trace through the [repository skill](.agents/skills/prepare-ra8p1-trace/SKILL.md).
+   Enable `vscode-cmsis-debugger.enableTraceGenerationView`
    in local VS Code settings. In the CMSIS Debugger **Trace Generation** view,
    review its `.ctrace.yml` profile and run **Convert *.ctrace.yml to *.ctrace-run.yml**.
    Repeat conversion after rebuilding or changing the profile so DWT addresses

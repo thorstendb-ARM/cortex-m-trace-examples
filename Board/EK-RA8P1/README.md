@@ -37,26 +37,28 @@ changes no lifecycle, OTP, option or security configuration.
 Select **EK-RA8P1 → ULINKplus** in CMSIS Manage Solution Settings and build:
 
 ```sh
-cbuild Trace.csolution.yml --target all --active 'EK-RA8P1@ULINKplus' --packs --frozen-packs --update-rte
+cbuild Trace.csolution.yml --active 'EK-RA8P1@ULINKplus' --packs --frozen-packs --update-rte
 ```
 
-The normal solution build runs `CopyRA8P1DebugDescription` after linking,
-including an otherwise up-to-date build. Use the IDE solution build or the
-`--target all` command above to include this step. It uses the existing CMake
-`-E copy_if_different` command to copy [debug-run.yml](debug-run.yml) to
-`out/Trace+EK-RA8P1.cbuild-run.yml`. No additional interpreter, YAML library or
-CMSIS tools export is required by this step.
+The firmware build has no custom preparation step. After the final build or
+refresh, invoke `Use $prepare-ra8p1-trace` with an agent that can read this
+repository's [skill](../../.agents/skills/prepare-ra8p1-trace/SKILL.md). It copies
+the temporary [debug-run.yml](debug-run.yml) using the existing CMake executable
+and generates the normal trace runtime with the installed pyTS.
 
-Generate the trace runtime from the current ELF through the normal **Trace
-Generation** view (or the bundled pyTS), as for the other targets. Then use
-**Enter Debug / Load & Debug**. The debugger uses GDB port 3333.
-
-After a standalone refresh, a `--context` build, or a CLI solution build without
-`--target all`, restore the debug description before generating trace:
+Without an agent, run the same copy from the repository root:
 
 ```sh
 cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
 ```
+
+Then generate the trace runtime from the current ELF through the normal **Trace
+Generation** view (or the bundled pyTS), as for the other targets. Use
+**Enter Debug / Load & Debug** after generation. The debugger uses GDB port 3333.
+A subsequent build, refresh or target change can replace the prepared description;
+repeat preparation after that operation. No additional interpreter, YAML library
+or CMSIS tools export is required. The skill is optional automation; the commands
+also work for a fresh clone with the documented build/debug tools installed.
 
 Trace uses the normal **file capture → automatic CSV conversion** workflow.
 Pausing or ending debugging converts the RAW file to
@@ -75,7 +77,8 @@ The unmodified DFP supplies no RA8P1 SWO sequences, processor/AP mapping or
 This is a maintained description for **RA_DFP 6.6.0**, not a general YAML patcher.
 Keep its DFP paths, image paths, transport settings and resources consistent with
 the layer and solution. Once the DFP/tool flow provides this behavior natively,
-remove the template and copy step together and verify the generated description.
+remove the template and preparation skill together and verify the generated
+description.
 Installed packs and the reference project remain unchanged.
 
 SWD is 10 MHz. MOCO `/8` gives a **1 MHz trace input**, serialized at **1 Mbaud**;

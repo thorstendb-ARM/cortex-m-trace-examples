@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # Temporary CPU0-only debug description for the unmodified RA_DFP 6.6.0.
-# The solution build copies this file to out/Trace+EK-RA8P1.cbuild-run.yml.
+# Apply after build/refresh with the prepare-ra8p1-trace skill or README command.
 # Relative solution/image paths below are based on that out/ directory.
 # Pack paths use the standard CMSIS_PACK_ROOT variable on each host.
-# Remove this template and its copy step once the DFP/tool flow supplies
+# Remove this template and the preparation skill once the DFP/tool flow supplies
 # CPU0/AP0, SWO routing/clock setup and CPU0-only trace operations.
 ---
 cbuild-run:

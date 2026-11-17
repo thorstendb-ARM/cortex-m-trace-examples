@@ -37,17 +37,6 @@ project:
         - file: ../../Common/Trace/itm_output.c
         - file: ../../Common/Include/trace.h
 
-  executes:
-    - execute: CopyRA8P1DebugDescription
-      for-context: .Debug+EK-RA8P1
-      run: cmake -E copy_if_different $input(1)$ $output(0)$
-      always:
-      input:
-        - $elf()$
-        - $SolutionDir()$/Board/EK-RA8P1/debug-run.yml
-      output:
-        - $SolutionDir()$/out/Trace+EK-RA8P1.cbuild-run.yml
-
   layers:
     - layer: $Board-Layer$
       type: Board

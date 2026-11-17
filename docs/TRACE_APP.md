@@ -151,11 +151,12 @@ Their development status and source/release links are recorded there.
    watch and its writing-PC output as described above.
    Start the matching debugger configuration and inspect the resulting capture.
 
-For EK-RA8P1, the solution build copies the versioned CPU0 debug description
-using CMake. Trace generation then uses this description and the current ELF
-through the same view or pyTS command as the other targets. After a standalone
-refresh or `--context` build, restore the description with the command in the
-[board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+For EK-RA8P1, apply the versioned CPU0 debug description after the final
+build/refresh using the [preparation skill](../.agents/skills/prepare-ra8p1-trace/SKILL.md)
+or CMake command in the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+Trace generation then uses this description and the current ELF through the same
+view or pyTS command as the other targets. Repeat preparation after a subsequent
+build, refresh or target change.
 Capture uses the normal SWO file and automatic CSV workflow.
 
 Equivalent offline generation with the bundled pyTS executable, for example:

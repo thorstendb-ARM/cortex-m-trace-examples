@@ -129,21 +129,21 @@ See [Validation](VALIDATION.md) for hardware checks and results.
 ## EK-RA8P1 trace setup
 
 Build `EK-RA8P1@ULINKplus` with the installed GCC toolchain using the IDE solution
-build or `cbuild --target all --active EK-RA8P1@ULINKplus Trace.csolution.yml`. The
-`CopyRA8P1DebugDescription` step uses the existing CMake executable to copy the
-versioned CPU0-only debug description into `out/`, including no-op builds.
-This step needs no additional interpreter or CMSIS Debugger tools export.
-Generate the trace runtime from the current ELF with the normal Trace Generation
-view or bundled pyTS, then use Load & Debug. SWO is captured to a file and
-converted automatically to CSV on pause/end.
-
-After a standalone refresh, a `--context` build, or a CLI solution build without
-`--target all`, copy the description explicitly before trace generation:
+build or `cbuild --active EK-RA8P1@ULINKplus Trace.csolution.yml`. The firmware
+build has no custom preparation step. After the final build/refresh, invoke
+`Use $prepare-ra8p1-trace` with the
+[repository skill](../.agents/skills/prepare-ra8p1-trace/SKILL.md), or copy the
+versioned CPU0-only debug description explicitly:
 
 ```sh
 cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
 ```
 
+Generate the trace runtime from the current ELF with the normal Trace Generation
+view or bundled pyTS, then use Load & Debug. Repeat preparation after a subsequent
+build/refresh or target change. SWO is captured to a file and converted automatically
+to CSV on pause/end. This needs no additional interpreter or CMSIS tools export.
+
 The [board README](../Board/EK-RA8P1/README.md) explains the temporary DFP 6.6.0
-workaround, clock baseline and hardware prerequisites. A clean CI solution build
-checks that the copy step works without a local debugger tools export.
+workaround, clock baseline and hardware prerequisites. CI builds the firmware and
+checks the explicit CMake copy separately; it does not require an AI agent.

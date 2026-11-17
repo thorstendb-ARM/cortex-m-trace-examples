@@ -56,12 +56,8 @@ jobs:
           --frozen-packs
           --update-rte
 
-      - name: Build RA8P1 solution flow
+      - name: Check explicit RA8P1 debug preparation
         if: matrix.context == 'TraceDemo.Debug+EK-RA8P1'
-        run: >-
-          cbuild Trace.csolution.yml
-          --target all
-          --active 'EK-RA8P1@ULINKplus'
-          --packs
-          --frozen-packs
-          --update-rte
+        run: |
+          cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
+          cmp Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
