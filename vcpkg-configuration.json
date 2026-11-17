@@ -7,9 +7,9 @@
     }
   ],
   "requires": {
-    "arm:tools/open-cmsis-pack/cmsis-toolbox": "2.15.0",
-    "arm:compilers/arm/arm-none-eabi-gcc": "14.3.1",
-    "arm:tools/kitware/cmake": "3.31.5",
-    "arm:tools/ninja-build/ninja": "1.13.2"
+    "arm:tools/open-cmsis-pack/cmsis-toolbox": "*",
+    "arm:compilers/arm/arm-none-eabi-gcc": "*",
+    "arm:tools/kitware/cmake": "*",
+    "arm:tools/ninja-build/ninja": "*"
   }
 }

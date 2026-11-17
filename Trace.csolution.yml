@@ -1,7 +1,7 @@
 # Build inputs; cbuild generates *.cbuild*.yml and the debugger run description.
 solution:
   created-for: CMSIS-Toolbox@2.15.0
-  compiler: GCC@14.3.1
+  compiler: GCC
   cdefault:
 
   packs:
@@ -47,7 +47,7 @@ solution:
           images:
             - project-context: TraceDemo.Debug
           debugger:
-            name: ULINKplus@pyOCD
+            name: ULINKpro@pyOCD
             protocol: swd
             clock: 10000000
             trace:
