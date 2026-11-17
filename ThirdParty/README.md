@@ -46,6 +46,6 @@ The CMSIS C startup places `.vectors` at MRAM origin using the shared linker
 script, initializes data through the CMSIS copy table and lets newlib initialize
 BSS. The DFP's FSP-generated startup is not selected. Renesas::RA_DFP@6.6.0
 supplies device metadata, SVD and programming algorithms from the installed pack;
-its contents are unchanged. The board-local trace override adapts the supplied
+its contents are unchanged. The board-local debug description adapts the supplied
 project's historical CPU0 SWO sequence, with the reset-clock frequency and
 explicit AP preservation. See the [board documentation](../Board/EK-RA8P1/README.md).

@@ -207,8 +207,9 @@ CMSIS-based CPU0 startup and core header, internal code MRAM/SRAM0 and the
 linker template. The Cortex-M33 CPU1 is not an application target.
 
 The original `Renesas::RA_DFP@6.6.0` remains unmodified. A documented local
-run-description override supplies missing CPU0/AP0 and SWO setup; a preparation
-script generates CPU0-only trace settings from the current ELF. The solution
-build runs it automatically; invoke it explicitly after a standalone refresh. No `.dbgconf` defaults exist for this device in that DFP.
+CPU0-only debug description supplies the missing CPU0/AP0 and SWO setup. The
+solution build copies it with CMake; standard pyTS generates trace settings from
+the current ELF. Restore the description after a standalone refresh. No `.dbgconf`
+defaults exist for this device in that DFP.
 The board README records Debug In jumpers, separate power, security prerequisites,
 manual links and the remaining hardware checks.

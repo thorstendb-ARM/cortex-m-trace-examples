@@ -151,10 +151,12 @@ Their development status and source/release links are recorded there.
    watch and its writing-PC output as described above.
    Start the matching debugger configuration and inspect the resulting capture.
 
-For EK-RA8P1, the solution build automatically runs the CPU0 preparation and
-pyTS conversion after linking. After a standalone refresh, manual conversion
-or `--context` build, run `ruby Board/EK-RA8P1/prepare_trace.rb` explicitly.
-Capture still uses the normal SWO file and automatic CSV workflow. See the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+For EK-RA8P1, the solution build copies the versioned CPU0 debug description
+using CMake. Trace generation then uses this description and the current ELF
+through the same view or pyTS command as the other targets. After a standalone
+refresh or `--context` build, restore the description with the command in the
+[board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+Capture uses the normal SWO file and automatic CSV workflow.
 
 Equivalent offline generation with the bundled pyTS executable, for example:
 

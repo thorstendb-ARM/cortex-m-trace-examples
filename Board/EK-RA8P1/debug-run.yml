@@ -1,0 +1,164 @@
+# SPDX-License-Identifier: Apache-2.0
+# Temporary CPU0-only debug description for the unmodified RA_DFP 6.6.0.
+# The solution build copies this file to out/Trace+EK-RA8P1.cbuild-run.yml.
+# Relative solution/image paths below are based on that out/ directory.
+# Pack paths use the standard CMSIS_PACK_ROOT variable on each host.
+# Remove this template and its copy step once the DFP/tool flow supplies
+# CPU0/AP0, SWO routing/clock setup and CPU0-only trace operations.
+---
+cbuild-run:
+  generated-by: TraceDemo EK-RA8P1 debug template for RA_DFP 6.6.0
+  solution: "../Trace.csolution.yml"
+  target-type: EK-RA8P1
+  target-set: ULINKplus
+  compiler: GCC
+  device: Renesas::R7KA8P1KF
+  device-pack: Renesas::RA_DFP@6.6.0
+  device-pack-path: "${CMSIS_PACK_ROOT}/Renesas/RA_DFP/6.6.0"
+  output:
+    - file: TraceDemo/EK-RA8P1/Debug/TraceDemo.elf
+      info: generate by TraceDemo.Debug+EK-RA8P1
+      type: elf
+      project: TraceDemo
+      load: image+symbols
+      pname: CPU0
+    - file: TraceDemo/EK-RA8P1/Debug/TraceDemo.hex
+      info: generate by TraceDemo.Debug+EK-RA8P1
+      type: hex
+      project: TraceDemo
+      load: none
+      pname: CPU0
+    - file: TraceDemo/EK-RA8P1/Debug/TraceDemo.bin
+      info: generate by TraceDemo.Debug+EK-RA8P1
+      type: bin
+      project: TraceDemo
+      load: none
+      pname: CPU0
+  system-resources:
+    memory:
+    - name: ITCM
+      access: rwx
+      start: 0
+      size: 131072
+      pname: CPU0
+      from-pack: Renesas::RA_DFP@6.6.0
+    - name: DTCM
+      access: rw
+      start: 536870912
+      size: 131072
+      pname: CPU0
+      from-pack: Renesas::RA_DFP@6.6.0
+    - name: Flash
+      access: rx
+      start: 33554432
+      size: 1048576
+      default: true
+      from-pack: Renesas::RA_DFP@6.6.0
+    - name: SRAM
+      access: rwx
+      start: 570425344
+      size: 1703936
+      default: true
+      from-pack: Renesas::RA_DFP@6.6.0
+    - name: Config
+      access: r
+      start: 46788672
+      size: 1984
+      from-pack: Renesas::RA_DFP@6.6.0
+    - name: OTP_Config
+      access: r
+      start: 48264704
+      size: 66356
+      from-pack: Renesas::RA_DFP@6.6.0
+    processors:
+    - core: Cortex-M85
+      revision: r0p0
+      pname: CPU0
+      endian: little
+      fpu: dp
+      mpu: present
+      dsp: present
+      trustzone: present
+      mve: fp
+      pacbti: present
+      max-clock: 480000000
+  system-descriptions:
+  - file: "${CMSIS_PACK_ROOT}/Renesas/RA_DFP/6.6.0/SVD/R7KA8P1AD.svd"
+    type: svd
+  - file: "${CMSIS_PACK_ROOT}/ARM/CMSIS-RTX/5.9.0/RTX5.scvd"
+    type: scvd
+    pname: CPU0
+  debugger:
+    name: ULINKplus@pyOCD
+    protocol: swd
+    clock: 10000000
+    start-pname: CPU0
+    gdbserver:
+    - port: 3333
+      pname: CPU0
+    trace:
+    - swo-uart:
+      mode: file
+      input-clock: 1000000
+      output-clock: 1000000
+  programming:
+  - algorithm: "${CMSIS_PACK_ROOT}/Renesas/RA_DFP/6.6.0/Flash/RA8P1_1M.FLM"
+    start: 33554432
+    size: 1048576
+    ram-start: 570425344
+    ram-size: 30720
+  - algorithm: "${CMSIS_PACK_ROOT}/Renesas/RA_DFP/6.6.0/Flash/RA8P1_CONF.FLM"
+    start: 46788672
+    size: 1984
+    ram-start: 570425344
+    ram-size: 30720
+  - algorithm: "${CMSIS_PACK_ROOT}/Renesas/RA_DFP/6.6.0/Flash/RA8P1_OTP.FLM"
+    start: 48264704
+    size: 66356
+    ram-start: 570425344
+    ram-size: 30720
+  debug-topology:
+    debugports:
+    - dpid: 0
+      accessports:
+      - apid: 0
+        index: 0
+    processors:
+    - pname: CPU0
+      apid: 0
+    trace-sinks:
+    - serialwire:
+  debug-sequences:
+  - name: SetupRA8P1SWO
+    blocks:
+    - execute: |
+        __var saved_ap = __ap;
+        __ap = 0;
+        Write32(0x4001B030, 0x00000009); // TRPORTCR: CPU0 SWO on P209.
+        __var trace_clock = Read8(0x4001E03F);
+    - if: trace_clock != 0x83
+      blocks:
+      - execute: |
+          __var saved_prcr = Read16(0x4001E3FA) & 0x000F;
+          Write16(0x4001E3FA, 0xA501 | saved_prcr);
+      - if: "(trace_clock & 0x80) != 0"
+        execute: |
+          Write8(0x4001E03F, trace_clock & 0x7F);
+      - execute: |
+          Write8(0x4001E03F, 0x03); // TRCK=/8 while stopped.
+          Write8(0x4001E03F, 0x83); // 8 MHz MOCO /8 = 1 MHz trace input.
+          Write16(0x4001E3FA, 0xA500 | saved_prcr);
+    - execute: |
+        __ap = saved_ap;
+  - name: DebugDeviceUnlock
+    blocks:
+    - if: "(__traceout & 1) != 0"
+      execute: |
+        // Enable the clock before CoreSight discovers the CPU0 TPIU.
+        Sequence("SetupRA8P1SWO");
+  - name: TraceStart
+    blocks:
+    - if: "(__traceout & 1) != 0"
+      execute: |
+        // Restore routing after reset, before generic ITM/TPIU setup.
+        Sequence("SetupRA8P1SWO");

@@ -128,15 +128,22 @@ See [Validation](VALIDATION.md) for hardware checks and results.
 
 ## EK-RA8P1 trace setup
 
-Build `EK-RA8P1@ULINKplus` normally with the installed GCC toolchain. The
-`PrepareRA8P1Trace` post-build step automatically applies the CPU0-only run
-override and invokes the installed pyTS for the current ELF, including no-op
-builds. Ruby's standard YAML library and the CMSIS Debugger tools export are
-required for this target. Normal Load & Debug then works with file-based SWO
-and automatic RAW-to-CSV conversion on pause/end; no trace TCP server is used.
+Build `EK-RA8P1@ULINKplus` with the installed GCC toolchain using the IDE solution
+build or `cbuild --target all --active EK-RA8P1@ULINKplus Trace.csolution.yml`. The
+`CopyRA8P1DebugDescription` step uses the existing CMake executable to copy the
+versioned CPU0-only debug description into `out/`, including no-op builds.
+This step needs no additional interpreter or CMSIS Debugger tools export.
+Generate the trace runtime from the current ELF with the normal Trace Generation
+view or bundled pyTS, then use Load & Debug. SWO is captured to a file and
+converted automatically to CSV on pause/end.
 
-After a standalone refresh, ordinary manual trace conversion or a `--context`
-build (which skips CMSIS `executes`), run
-`ruby Board/EK-RA8P1/prepare_trace.rb` explicitly. An optional argument selects
-pyTS when the tools export is unavailable. The [board README](../Board/EK-RA8P1/README.md)
-explains the DFP gaps, clock baseline and hardware prerequisites.
+After a standalone refresh, a `--context` build, or a CLI solution build without
+`--target all`, copy the description explicitly before trace generation:
+
+```sh
+cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
+```
+
+The [board README](../Board/EK-RA8P1/README.md) explains the temporary DFP 6.6.0
+workaround, clock baseline and hardware prerequisites. A clean CI solution build
+checks that the copy step works without a local debugger tools export.

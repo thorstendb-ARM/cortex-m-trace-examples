@@ -35,7 +35,7 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 | [STM32F4-DISCO](Board/STM32F4-DISCO/README.md), MB997 B-02 | Cortex-M4 | `ULINKplus`, `STLink` |
 | [EK-RA8P1](Board/EK-RA8P1/README.md) | Cortex-M85 CPU0, TrustZone build off | `ULINKplus` |
 
-EK-RA8P1 applies its [CPU0 trace preparation](Board/EK-RA8P1/README.md#debug-and-trace-preparation) automatically during a solution build.
+EK-RA8P1 copies its temporary [CPU0 debug description](Board/EK-RA8P1/README.md#debug-and-trace-preparation) during a solution build; trace generation uses the normal tools.
 
 Hardware results and open capture issues are listed in
 [Validation](docs/VALIDATION.md). This project currently implements SWO;

@@ -37,44 +37,46 @@ changes no lifecycle, OTP, option or security configuration.
 Select **EK-RA8P1 → ULINKplus** in CMSIS Manage Solution Settings and build:
 
 ```sh
-cbuild Trace.csolution.yml --active 'EK-RA8P1@ULINKplus' --packs --frozen-packs --update-rte
+cbuild Trace.csolution.yml --target all --active 'EK-RA8P1@ULINKplus' --packs --frozen-packs --update-rte
 ```
 
-The normal solution build automatically runs `PrepareRA8P1Trace` after linking,
-including an otherwise up-to-date build. The step locates the installed CMSIS
-Debugger's pyTS through `.cmsis/tools-environment.yml`, applies the CPU0 override
-and regenerates the current-ELF trace configuration. Ruby with its standard YAML
-library is required for this target. **Enter Debug / Load & Debug** then uses the
-prepared run description and GDB port 3333.
+The normal solution build runs `CopyRA8P1DebugDescription` after linking,
+including an otherwise up-to-date build. Use the IDE solution build or the
+`--target all` command above to include this step. It uses the existing CMake
+`-E copy_if_different` command to copy [debug-run.yml](debug-run.yml) to
+`out/Trace+EK-RA8P1.cbuild-run.yml`. No additional interpreter, YAML library or
+CMSIS tools export is required by this step.
 
-After a standalone refresh, manual trace conversion or a build with `--context`
-(which skips CMSIS Toolbox `executes` steps), prepare the run description with
-`ruby Board/EK-RA8P1/prepare_trace.rb`. An optional executable-path argument
-selects pyTS when the CMSIS tools environment is unavailable.
+Generate the trace runtime from the current ELF through the normal **Trace
+Generation** view (or the bundled pyTS), as for the other targets. Then use
+**Enter Debug / Load & Debug**. The debugger uses GDB port 3333.
+
+After a standalone refresh, a `--context` build, or a CLI solution build without
+`--target all`, restore the debug description before generating trace:
+
+```sh
+cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
+```
 
 Trace uses the normal **file capture → automatic CSV conversion** workflow.
-There is no live trace TCP service. Pausing or ending debugging converts the
-RAW file to `.trace/Trace+EK-RA8P1@ULINKplus.SWO.csv`; the GDB TCP connection is
-only for debugging.
+Pausing or ending debugging converts the RAW file to
+`.trace/Trace+EK-RA8P1@ULINKplus.SWO.csv`. There is no live trace TCP service.
 
 The unmodified DFP supplies no RA8P1 SWO sequences, processor/AP mapping or
-`.dbgconf` defaults. [trace-override.yml](trace-override.yml) and
-[prepare_trace.rb](prepare_trace.rb) implement the project's
-[temporary run-description override workflow](../../docs/TRACE_APP.md#temporary-run-description-overrides):
+`.dbgconf` defaults. The temporary debug description supplies:
 
-- Map CPU0 to AP0 and limit this generated run to the selected CPU0 image.
-- Enable P209 SWO output and the trace clock before CoreSight discovery and
-  after reset. Preserve PRCR access enables while setting TRCKCR to `/8`.
-- Retain legacy pyOCD ITM/TPIU setup. Full trace setup is not enabled.
-- Generate the runtime profile from the current ELF and omit only inactive
-  CPU1 disable writes. The supplied reference project reports CPU1/AP2 `WAIT ACK`;
-  no CPU1 workload or enabled trace source is removed.
+- CPU0 on AP0, with CPU0-only processor resources and trace configuration.
+- P209 SWO routing and the trace clock before CoreSight discovery and after reset.
+  PRCR access enables are preserved while setting TRCKCR to MOCO `/8`.
+- Legacy pyOCD ITM/TPIU setup; full trace setup is not enabled.
+- The pinned DFP's programming algorithms and system descriptions, referenced
+  through `${CMSIS_PACK_ROOT}`. Solution and ELF paths are relative to `out/`.
 
-The debugger uses the prepared `out/Trace+EK-RA8P1.cbuild-run.yml`, and trace
-uses `.trace/Trace+EK-RA8P1@ULINKplus.ctrace-run.yml`. The filenames and relative
-paths stay unchanged. Builds regenerate the run description and then reapply the override; installed
-packs and the reference project stay unchanged. A standalone CMSIS refresh
-regenerates the vendor-only run description until the next solution build.
+This is a maintained description for **RA_DFP 6.6.0**, not a general YAML patcher.
+Keep its DFP paths, image paths, transport settings and resources consistent with
+the layer and solution. Once the DFP/tool flow provides this behavior natively,
+remove the template and copy step together and verify the generated description.
+Installed packs and the reference project remain unchanged.
 
 SWD is 10 MHz. MOCO `/8` gives a **1 MHz trace input**, serialized at **1 Mbaud**;
 CPU0 timestamps use **8 MHz**. The profile watches `g_trace_sine` and

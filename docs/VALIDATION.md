@@ -241,23 +241,21 @@ layer's 1 MiB MRAM and 512 KiB SRAM0. It retains the 8 MHz MOCO reset clock,
 a 4 KiB main stack and the common RTX pool. No existing application source,
 RTX configuration, shared linker script or installed pack was changed.
 
-The board preparation script applied the versioned CPU0/AP0 SWO override and
-ran installed pyTS `1.0.1.dev2+ga70bcd1`. Both watched symbols resolved from the
-current ELF as signed 32-bit values. The runtime retained the two DWT write
-sources, ITM1, 8192-cycle PC sampling, 8 MHz timestamps and 16M DWT sync.
-The generated run/runtime descriptions contain no CPU1 register operations.
-SWO input/output clocks are both 1 MHz (MOCO /8, 1 Mbaud).
-Repeated preparation passed, the ELF stayed unchanged, and wrong-target and
-conflicting-sequence inputs were rejected before overwriting those inputs.
+The initial preparation generated a CPU0/AP0 SWO description and ran installed
+pyTS `1.0.1.dev2+ga70bcd1`. Both watched symbols resolved from the current ELF as
+signed 32-bit values. The runtime retained the two DWT write sources, ITM1,
+8192-cycle PC sampling, 8 MHz timestamps and 16M DWT sync. The run/runtime
+descriptions contain no CPU1 register operations. SWO input/output clocks are
+both 1 MHz (MOCO /8, 1 Mbaud).
 
 The initial Enter Debug attempt failed before attaching: the ordinary build
-replaced the manually prepared run description, removing CPU0/AP0 mapping.
-The adapter also generated an empty GDB port without a default port entry.
-An additional serializer problem emitted multiline sequence code with a closing
-single quote at column zero; CMSIS Solution rejected that output. The target now
-has a default GDB port, literal-block YAML output and a target-specific, always-run
-post-build preparation step. The installed CMSIS Solution reader accepted the
-result and generated port 3333 automatically.
+replaced the prepared run description, removing CPU0/AP0 mapping. The adapter
+also generated an empty GDB port without a default port entry. The target now
+has a default GDB port and a versioned, CPU0-only `debug-run.yml` description
+with literal-block sequence code. A target-specific, always-run CMake copy step
+installs it after linking. Trace generation uses the normal view or bundled pyTS.
+The description retains the debug topology and sequences used in the hardware
+checks below; no YAML serializer or additional interpreter is required.
 
 A subsequent normal `cmsis_action load_and_debug` completed CMSIS Load with exit
 0 and reached the board's `main()`. RTX ran the Sine100ms, Noise100ms and
@@ -278,3 +276,13 @@ programming but reported an I/O error on exit; the subsequent normal CMSIS
 Load & Debug completed successfully. Repeated launch/reset and debug-end capture
 integrity remain to be checked. The reference project's 1-GHz ITM0 results do not
 apply to this reset-clock image.
+
+**Interpreter-free preparation — 2026-11-17:** the normal CMSIS solution build
+passed with the CMake copy step. The copied run description matches the versioned
+template, and its CPU0 topology/sequences match the earlier hardware-tested
+configuration. A fresh source snapshot in a path containing spaces passed the
+`--target all` solution build without `.cmsis/tools-environment.yml` and with
+an interpreter shim that rejects any Ruby invocation. The copied run description
+matched the template byte for byte. Standard pyTS generated all six CPU0 trace
+references; trace register operations matched the existing runtime. The current debug session could not read the core, and its server log reported
+`No such device`; no new hardware capture is claimed for this preparation change.

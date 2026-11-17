@@ -68,16 +68,15 @@ The generated `.cbuild-run.yml` represents the active set and is replaced when
 switching. Source and generated trace profiles include `@<set>` for named sets;
 see the [file naming table](TRACE_APP.md#configuration-ownership).
 
-## EK-RA8P1 CPU0 preparation
+## EK-RA8P1 CPU0 debug description
 
 Use `EK-RA8P1@ULINKplus`, 10 MHz SWD, GDB port 3333 and 1 Mbaud SWO.
-The target-specific `PrepareRA8P1Trace` step applies the CPU0/AP0 clock/routing
-override and generates the runtime profile automatically after a solution build.
-Enter Debug uses the prepared run description. SWO uses file capture with
-automatic RAW-to-CSV conversion on pause/end; no live trace TCP port is used.
+The target-specific `CopyRA8P1DebugDescription` solution-build step copies the
+versioned CPU0/AP0 description using CMake. Generate trace through the normal
+Trace Generation view or bundled pyTS before Enter Debug. SWO uses file capture
+with automatic RAW-to-CSV conversion on pause/end and no live trace TCP service.
 
-After a standalone refresh, manual trace conversion or a `--context` build,
-run `ruby Board/EK-RA8P1/prepare_trace.rb`. See the
-[board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
-Load/debug, RTX and automatic CSV on pause passed; capture-boundary errors
-remain recorded in [Validation](VALIDATION.md#ek-ra8p1-cpu0--2026-11-17).
+After a standalone refresh or `--context` build, restore the description with the
+CMake command in the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+Load/debug, RTX and automatic CSV on pause passed with the same CPU0 settings;
+capture-boundary errors remain in [Validation](VALIDATION.md#ek-ra8p1-cpu0--2026-11-17).
