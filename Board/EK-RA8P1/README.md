@@ -43,13 +43,13 @@ cbuild Trace.csolution.yml --active 'EK-RA8P1@ULINKplus' --packs --frozen-packs 
 The firmware build has no custom preparation step. After the final build or
 refresh, invoke `Use $prepare-ra8p1-trace` with an agent that can read this
 repository's [skill](../../.agents/skills/prepare-ra8p1-trace/SKILL.md). It copies
-the temporary [debug-run.yml](debug-run.yml) using the existing CMake executable
+the temporary [debug-run.yml](debug-run.yml) using its file tools
 and generates the normal trace runtime with the installed pyTS.
 
 Without an agent, run the same copy from the repository root:
 
 ```sh
-cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
+cp Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
 ```
 
 Then generate the trace runtime from the current ELF through the normal **Trace
@@ -69,7 +69,10 @@ The unmodified DFP supplies no RA8P1 SWO sequences, processor/AP mapping or
 
 - CPU0 on AP0, with CPU0-only processor resources and trace configuration.
 - P209 SWO routing and the trace clock before CoreSight discovery and after reset.
-  PRCR access enables are preserved while setting TRCKCR to MOCO `/8`.
+  All PRCR access enables are preserved while setting TRCKCR to MOCO `/8`.
+  An already matching running trace clock is retained. A different running
+  source/divider is rejected before register writes; end trace and reset before
+  changing modes (Hardware Manual p.376).
 - Legacy pyOCD ITM/TPIU setup; full trace setup is not enabled.
 - The pinned DFP's programming algorithms and system descriptions, referenced
   through `${CMSIS_PACK_ROOT}`. Solution and ELF paths are relative to `out/`.
@@ -80,6 +83,13 @@ the layer and solution. Once the DFP/tool flow provides this behavior natively,
 remove the template and preparation skill together and verify the generated
 description.
 Installed packs and the reference project remain unchanged.
+
+Preparation checks the production source profile before changing runtime files.
+Active CPU1 settings and conflicting `~` preview profiles stop preparation;
+disabled CPU1 placeholders require removal with a backup to prevent unwanted
+CPU1 disable writes. Custom CPU0 sources remain intact. Both installed pyOCD
+transport parsing and pyTS output must pass, including unresolved-symbol and
+register-operation checks; successful conversion alone is insufficient.
 
 SWD is 10 MHz. MOCO `/8` gives a **1 MHz trace input**, serialized at **1 Mbaud**;
 CPU0 timestamps use **8 MHz**. The profile watches `g_trace_sine` and

@@ -133,18 +133,23 @@ cbuild-run:
     blocks:
     - execute: |
         __var saved_ap = __ap;
+        __Result = 0;
         __ap = 0;
-        Write32(0x4001B030, 0x00000009); // TRPORTCR: CPU0 SWO on P209.
         __var trace_clock = Read8(0x4001E03F);
-    - if: trace_clock != 0x83
+    - if: "(trace_clock & 0x80) != 0 && (trace_clock & 0x1F) != 0x03"
+      execute: |
+        __ap = saved_ap;
+        __Result = -1;
+        Message(2, "RA8P1 TRCLK is running with a different source/divider; end trace and reset before changing it");
+    - if: __Result == 0
       blocks:
       - execute: |
-          __var saved_prcr = Read16(0x4001E3FA) & 0x000F;
-          Write16(0x4001E3FA, 0xA501 | saved_prcr);
-      - if: "(trace_clock & 0x80) != 0"
+          Write32(0x4001B030, 0x00000009); // TRPORTCR: CPU0 SWO on P209.
+      - if: "(trace_clock & 0x80) == 0"
         execute: |
-          Write8(0x4001E03F, trace_clock & 0x7F);
-      - execute: |
+          // Preserve PRC0, PRC1, PRC3, PRC4 and PRC5 (Hardware Manual pp.525-526).
+          __var saved_prcr = Read16(0x4001E3FA) & 0x003B;
+          Write16(0x4001E3FA, 0xA501 | saved_prcr);
           Write8(0x4001E03F, 0x03); // TRCK=/8 while stopped.
           Write8(0x4001E03F, 0x83); // 8 MHz MOCO /8 = 1 MHz trace input.
           Write16(0x4001E3FA, 0xA500 | saved_prcr);
