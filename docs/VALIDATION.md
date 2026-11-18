@@ -290,3 +290,28 @@ local documentation links and diff checks passed. The common CProject now
 matches `main`. The current debug session could not read the core and its server
 previously reported `No such device`; no new hardware capture is claimed for
 this preparation change.
+
+## EK-RA8P1 preparation corrections — 2026-11-18
+
+The debug template now preserves all PRCR permissions (`0x003B`) and rejects a
+conflicting running trace-clock source/divider before register writes. Matching
+running clocks remain untouched. The skill preflights source/preview conflicts,
+checks installed-consumer acceptance and all generated register groups, and
+preserves custom CPU0 settings. Preparation uses a file copy without a custom
+helper or build hook; vendor pack contents remain unchanged.
+
+**Offline PASS:** 337 host checks with the installed pyOCD YAML parser and
+sequence interpreter cover both entry sequences, SWO disabled, stopped clocks,
+all 32 PRCR permission combinations, matching and conflicting running clocks,
+AP restoration and both throwing and log-only errors. No probe transport was
+created. The installed trace consumer accepts file mode at 1 MHz/1 Mbaud.
+
+Bundled pyTS generated all six CPU0 references from the tracked production
+profile and existing GCC ELF, resolving both DWT symbols without errors or CPU1
+accesses. A missing-symbol negative case was detected, including with
+`--allow-missing`; normal regeneration restored identical run/profile/runtime/ELF
+hashes. Skill, common YAML structure, documentation links and diff checks pass.
+
+Firmware sources did not change; no new hardware capture is claimed. The
+November 17 hardware results above predate these sequence changes, and capture
+integrity plus hardware acceptance of the revised sequences remain open.

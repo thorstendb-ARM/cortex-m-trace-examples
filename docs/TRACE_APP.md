@@ -153,11 +153,20 @@ Their development status and source/release links are recorded there.
 
 For EK-RA8P1, apply the versioned CPU0 debug description after the final
 build/refresh using the [preparation skill](../.agents/skills/prepare-ra8p1-trace/SKILL.md)
-or CMake command in the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+or file-copy command in the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
 Trace generation then uses this description and the current ELF through the same
 view or pyTS command as the other targets. Repeat preparation after a subsequent
 build, refresh or target change.
 Capture uses the normal SWO file and automatic CSV workflow.
+
+For this target, preflight the production profile before changing generated
+files. Resolve preview-profile conflicts and active CPU1 settings first;
+remove only disabled CPU1 placeholders with a backup. Require the installed
+pyOCD transport parser to accept the SWO file source and inspect pyTS errors,
+missing symbols and all register groups, including source-disable groups.
+The UI converter uses `--allow-missing`, so its exit status alone is insufficient.
+After extension watchers settle, re-read the output; repeated preparation
+without input changes must preserve the configuration.
 
 Equivalent offline generation with the bundled pyTS executable, for example:
 

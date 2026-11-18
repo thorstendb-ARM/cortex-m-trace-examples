@@ -38,7 +38,7 @@ Capture-start and pause/end recording issues remain; see [Validation](docs/VALID
 EK-RA8P1: after build/refresh, run `Use $prepare-ra8p1-trace`
 ([skill](.agents/skills/prepare-ra8p1-trace/SKILL.md)) or follow the
 [shell procedure](Board/EK-RA8P1/README.md#debug-and-trace-preparation).
-This temporary RA_DFP 6.6.0 workaround uses CMake and bundled pyTS without a build
+This temporary RA_DFP 6.6.0 workaround uses a file copy and bundled pyTS without a build
 hook or extra interpreter. SWO uses the standard automatic CSV workflow.
 
 Hardware results and open capture issues are listed in

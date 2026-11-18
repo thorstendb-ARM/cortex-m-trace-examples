@@ -136,7 +136,7 @@ build has no custom preparation step. After the final build/refresh, invoke
 versioned CPU0-only debug description explicitly:
 
 ```sh
-cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
+cp Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
 ```
 
 Generate the trace runtime from the current ELF with the normal Trace Generation
@@ -146,4 +146,4 @@ to CSV on pause/end. This needs no additional interpreter or CMSIS tools export.
 
 The [board README](../Board/EK-RA8P1/README.md) explains the temporary DFP 6.6.0
 workaround, clock baseline and hardware prerequisites. CI builds the firmware and
-checks the explicit CMake copy separately; it does not require an AI agent.
+checks the explicit file copy separately; it does not require an AI agent.

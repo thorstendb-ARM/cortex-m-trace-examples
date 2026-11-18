@@ -73,7 +73,7 @@ see the [file naming table](TRACE_APP.md#configuration-ownership).
 Use `EK-RA8P1@ULINKplus`, 10 MHz SWD, GDB port 3333 and 1 Mbaud SWO.
 After the final build/refresh, apply the versioned CPU0/AP0 description with the
 [preparation skill](../.agents/skills/prepare-ra8p1-trace/SKILL.md) or the explicit
-CMake command in the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
+file-copy command in the [board procedure](../Board/EK-RA8P1/README.md#debug-and-trace-preparation).
 Generate trace through the normal Trace Generation view or bundled pyTS before
 Enter Debug. SWO uses file capture with automatic RAW-to-CSV conversion on
 pause/end and no live trace TCP service.

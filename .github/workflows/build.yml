@@ -59,5 +59,5 @@ jobs:
       - name: Check explicit RA8P1 debug preparation
         if: matrix.context == 'TraceDemo.Debug+EK-RA8P1'
         run: |
-          cmake -E copy_if_different Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
+          cp Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
           cmp Board/EK-RA8P1/debug-run.yml out/Trace+EK-RA8P1.cbuild-run.yml
